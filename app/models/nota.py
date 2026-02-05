@@ -5,7 +5,7 @@ from datetime import datetime
 
 class Nota(Base):
     id_nota = Column(Integer, primary_key=True, index=True)
-    contenido = Column(String(50), nullable=False)
+    contenido = Column(String(150), nullable=False)
     fecha_creacion = Column(DateTime, default=datetime.utcnow)
     fecha_actualizacion = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     es_compartida = Column(Boolean, default=False)

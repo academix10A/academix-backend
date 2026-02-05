@@ -4,7 +4,7 @@ from app.db.base_class import Base
 
 class Opcion(Base):
     id_opcion = Column(Integer, primary_key=True, index=True)
-    respuesta = Column(String(50), nullable=False)
+    respuesta = Column(String(150), nullable=False)
     es_correcta = Column(Boolean, default=False)
     
     # Clave foránea

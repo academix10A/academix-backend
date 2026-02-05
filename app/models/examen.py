@@ -4,9 +4,9 @@ from app.db.base_class import Base
 
 class Examen(Base):
     id_examen = Column(Integer, primary_key=True, index=True)
-    titulo = Column(String(50), nullable=False)
+    titulo = Column(String(150), nullable=False)
     cantidad_preguntas = Column(Integer, default=0)
-    descripcion = Column(String(50))
+    descripcion = Column(String(250))
     
     # Clave foránea
     id_subtema = Column(Integer, ForeignKey("subtema.id_subtema"))

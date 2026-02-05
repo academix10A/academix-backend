@@ -3,6 +3,8 @@ from fastapi import FastAPI
 # from app.admin.views import UserAdmin
 from app.db.session import init_db
 from app.api.v1.api import tema, usuarios, auth, recursos,examen, subtema, estado, rol, tipo, etiqueta, publicaciones, nota, pregunta, opcion, intento
+import logging
+
 
 # Inicializar base de datos (crear tablas)
 init_db()
@@ -10,8 +12,10 @@ init_db()
 app = FastAPI(
     title="Academix API",
     description="API para plataforma de biblioteca virtual y hub de estudio colaborativo",
-    version="1.0.0"
+    version="1.0.0",
+    
 )
+
 
 # Configuración de Admin (descomentar cuando esté listo):
 # from app.db.session import engine
@@ -44,3 +48,12 @@ def root():
         "author": "Arath",
         "version": "1.0.0"
     }
+    
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("app.log"),
+        logging.StreamHandler()
+    ]
+)    

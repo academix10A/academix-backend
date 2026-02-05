@@ -11,15 +11,16 @@ class Usuario(Base):
     apellido_materno = Column(String(150), nullable=False)
     correo = Column(String(150), unique=True, index=True, nullable=False)
     contrasena_hash = Column(String(255), nullable=False)
-    estado = Column(String(150), default="activo")
     fecha_registro = Column(DateTime, default=datetime.utcnow)
     
     # Clave foránea
     id_rol = Column(Integer, ForeignKey("rol.id_rol"))
+    id_estado = Column(Integer, ForeignKey("estado.id_estado"), default=1)
     
     # Relaciones
-    rol_rel = relationship("Rol", back_populates="usuarios")
+    rol = relationship("Rol", back_populates="usuarios")
     recursos = relationship("Recurso", secondary=usuario_recurso, back_populates="usuarios")
     notas = relationship("Nota", back_populates="usuario")
     intentos = relationship("Intento", back_populates="usuario")
     publicaciones = relationship("Publicacion", back_populates="usuario")
+    estado = relationship("Estado", back_populates="usuarios")

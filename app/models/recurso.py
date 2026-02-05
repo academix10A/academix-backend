@@ -6,10 +6,10 @@ from app.models.intermedias import usuario_recurso, recurso_etiqueta
 
 class Recurso(Base):  
     id_recurso = Column(Integer, primary_key=True, index=True)
-    contenido = Column(String(50))
-    titulo = Column(String(50), nullable=False)
-    descripcion = Column(String(50))
-    url_archivo = Column(String(50))
+    contenido = Column(String(250))
+    titulo = Column(String(150), nullable=False)
+    descripcion = Column(String(250))
+    url_archivo = Column(String(250))
     fecha_publicacion = Column(DateTime, default=datetime.utcnow)
     
     # Claves foráneas

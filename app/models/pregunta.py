@@ -4,7 +4,7 @@ from app.db.base_class import Base
 
 class Pregunta(Base):
     id_pregunta = Column(Integer, primary_key=True, index=True)
-    contenido = Column(String(50), nullable=False)
+    contenido = Column(String(150), nullable=False)
     
     # Clave foránea
     id_examen = Column(Integer, ForeignKey("examen.id_examen"))

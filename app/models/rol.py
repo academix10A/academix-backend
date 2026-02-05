@@ -7,4 +7,4 @@ class Rol(Base):
     nombre = Column(String(50), index=True, nullable=False, unique=True)
     
     # Relación 1:M (Un rol puede tener muchos usuarios)
-    usuarios = relationship("Usuario", back_populates="rol_rel")
+    usuarios = relationship("Usuario", back_populates="rol")

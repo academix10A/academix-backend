@@ -6,7 +6,7 @@ from datetime import datetime
 class Publicacion(Base):
     id_publicacion = Column(Integer, primary_key=True, index=True)
     titulo = Column(String(150), nullable=False)
-    descripcion = Column(String(50), nullable=False)
+    descripcion = Column(String(250), nullable=False)
     texto = Column(String(150), nullable=False)
     fecha_creacion = Column(DateTime, default=datetime.utcnow)
     
