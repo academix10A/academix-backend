@@ -70,9 +70,6 @@ def listar_usuarios(
     db: Session = Depends(get_db),
     current_user: UsuarioModel = Depends(get_current_active_user)
 ):
-    client_ip = request.client.host
-    
-    print(client_ip)
     
     check_rate_limit(request, max_requests=30, window_seconds=60)
     

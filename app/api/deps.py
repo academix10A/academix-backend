@@ -11,7 +11,7 @@ from app.db.session import SessionLocal
 from app.crud import crud_usuario
 from app.models.usuario import Usuario
 
-reusable_oauth2 = OAuth2PasswordBearer(tokenUrl="/api/auth/login/access-token")
+reusable_oauth2 = OAuth2PasswordBearer(tokenUrl="/api/login/access-token")
 
 
 def get_db() -> Generator:
