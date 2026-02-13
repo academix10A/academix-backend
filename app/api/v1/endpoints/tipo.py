@@ -6,7 +6,7 @@ from app.api.deps import get_db
 from app.crud import crud_tipo
 from app.schemas.tipo import Tipo, TipoCreate, TipoUpdate
 
-router = APIRouter(prefix="/tipo", tags=["tipos"])
+router = APIRouter(prefix="/tipo", tags=["Tipos"])
 
 @router.get("/", response_model=List[Tipo])
 def list_rol(

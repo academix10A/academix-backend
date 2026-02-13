@@ -8,14 +8,14 @@ class PublicacionBase(BaseModel):
     texto: Optional[str] = None
     id_usuario: Optional[int] = None
     id_estado: Optional[int] = None
-    
+
 class PublicacionCreate(PublicacionBase):
     titulo: str
     descripcion: str
     texto: str
     id_usuario: int
     id_estado: int
-    
+
 class PublicacionUpdate(PublicacionBase):
     pass
 

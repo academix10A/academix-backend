@@ -6,7 +6,7 @@ from app.api.deps import get_db
 from app.crud import crud_examen
 from app.schemas.examen import Examen, ExamenCreate, ExamenUpdate
 
-router = APIRouter(prefix="/examen", tags=["examenes"])
+router = APIRouter(prefix="/examen", tags=["Examenes"])
 
 @router.get("/", response_model=List[Examen])
 def list_examen(

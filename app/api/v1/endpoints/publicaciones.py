@@ -6,7 +6,7 @@ from app.api.deps import get_db
 from app.crud import crud_publicacion
 from app.schemas.publicacion import Publicacion, PublicacionCreate, PublicacionUpdate
 
-router = APIRouter(prefix="/publicacion", tags=["publicaciones"])
+router = APIRouter(prefix="/publicacion", tags=["Publicaciones"])
 
 @router.get("/", response_model=List[Publicacion])
 def list_publicacion(
