@@ -6,7 +6,7 @@ from app.api.deps import get_db
 from app.crud import crud_etiqueta
 from app.schemas.etiqueta import Etiqueta, EtiquetaCreate, EtiquetaUpdate
 
-router = APIRouter(prefix="/etiqueta", tags=["etiquetas"])
+router = APIRouter(prefix="/etiqueta", tags=["Etiquetas"])
 
 @router.get("/", response_model=List[Etiqueta])
 def list_etiqueta(

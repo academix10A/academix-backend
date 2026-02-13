@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text
 from sqlalchemy.orm import relationship
 from app.db.base_class import Base
 from datetime import datetime
@@ -7,7 +7,7 @@ class Publicacion(Base):
     id_publicacion = Column(Integer, primary_key=True, index=True)
     titulo = Column(String(150), nullable=False)
     descripcion = Column(String(250), nullable=False)
-    texto = Column(String(150), nullable=False)
+    texto = Column(Text, nullable=False)
     fecha_creacion = Column(DateTime, default=datetime.utcnow)
     
     # Claves foráneas

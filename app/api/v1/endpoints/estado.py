@@ -6,7 +6,7 @@ from app.api.deps import get_db
 from app.crud import crud_estado
 from app.schemas.estado import Estado, EstadoCreate, EstadoUpdate
 
-router = APIRouter(prefix="/estado", tags=["estados"])
+router = APIRouter(prefix="/estado", tags=["Estados"])
 
 @router.get("/", response_model=List[Estado])
 def list_estados(

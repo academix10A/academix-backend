@@ -6,7 +6,7 @@ from app.api.deps import get_db
 from app.crud import crud_recursos
 from app.schemas.recurso import Recurso, RecursoCreate, RecursoUpdate
 
-router = APIRouter(prefix="/recurso", tags=["recursos"])
+router = APIRouter(prefix="/recurso", tags=["Recursos"])
 
 @router.get("/", response_model=List[Recurso])
 def list_recurso(
