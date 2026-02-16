@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from app.api.deps import get_db
+from app.api.v1.endpoints.auth import require_admin
 from app.crud import crud_examen
 from app.schemas.examen import Examen, ExamenCreate, ExamenUpdate
 
@@ -37,7 +38,7 @@ def read_examen(examen_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="examen no encontrado")
     return examen
 
-@router.post("/", response_model=Examen, status_code=201)
+@router.post("/", response_model=Examen, status_code=201,  dependencies=[Depends(require_admin)])
 def create_examen(examen_in: ExamenCreate, db: Session = Depends(get_db)):
     """Crea un nuevo examen."""
     # Validar que no exista examen con ese titulo
@@ -52,11 +53,12 @@ def create_examen(examen_in: ExamenCreate, db: Session = Depends(get_db)):
     return examen
 
 
-@router.put("/{examen_id}", response_model=Examen)
+@router.put("/{examen_id}", response_model=Examen,  dependencies=[Depends(require_admin)] )
 def update_examen(
     examen_id: int, 
     examen_in: ExamenUpdate, 
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+
 ):
     """Actualiza un examen existente."""
     examen = crud_examen.update_examen(db, examen_id=examen_id, examen_in=examen_in)
@@ -65,7 +67,7 @@ def update_examen(
     return examen
 
 
-@router.delete("/{examen_id}", response_model=Examen)
+@router.delete("/{examen_id}", response_model=Examen,  dependencies=[Depends(require_admin)])
 def delete_examen(examen_id: int, db: Session = Depends(get_db)):
     """Elimina un examen."""
     examen = crud_examen.delete_examen(db, examen_id=examen_id)

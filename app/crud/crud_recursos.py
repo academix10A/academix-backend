@@ -1,7 +1,4 @@
-"""
-CRUD de Recurso - VERSIÓN FORTIFICADA
-Validaciones robustas para PDFs, Videos y Audiolibros
-"""
+
 from typing import Optional, List
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
@@ -14,10 +11,6 @@ from app.models.subtema import Subtema
 from app.models.etiqueta import Etiqueta
 from app.schemas.recurso import RecursoCreate, RecursoUpdate
 
-
-# ========================================
-# FUNCIONES DE LECTURA (READ)
-# ========================================
 
 def get_recurso(db: Session, recurso_id: int) -> Optional[Recurso]:
     """Obtiene un Recurso por su ID."""
