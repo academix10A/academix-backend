@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from app.db.session import init_db
 from app.api.v1.api import tema, usuarios, auth, recursos,examen, subtema, estado, rol, tipo, etiqueta, publicaciones, nota, pregunta, opcion, intento
 import logging
+from fastapi.middleware.cors import CORSMiddleware
 
 
 # Inicializar base de datos (crear tablas)
@@ -14,6 +15,20 @@ app = FastAPI(
     description="API para plataforma de biblioteca virtual y hub de estudio colaborativo",
     version="1.0.0",
     
+)
+
+# Configuración de CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",  # React en desarrollo
+        "http://localhost:5173",  # Si usas Vite
+        "http://192.168.152.1:3000",  # Tu dominio en desarrollo
+        #"https://tu-dominio.com"  # Tu dominio en producción
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite todos los métodos (GET, POST, etc.)
+    allow_headers=["*"],  # Permite todos los headers
 )
 
 

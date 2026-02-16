@@ -6,8 +6,6 @@ from passlib.context import CryptContext
 
 from app.core.config import settings
 
-# 1. Cambiamos a argon2 como esquema principal. 
-# Dejamos bcrypt como 'deprecated' para que pueda verificar hashes viejos si ya tienes algunos en tu DB.
 pwd_context = CryptContext(
     schemes=["argon2", "bcrypt"],
     deprecated="auto",
@@ -32,7 +30,7 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def create_access_token(subject: Union[str, Any], expires_delta: timedelta = None) -> str:
+def create_access_token(subject: Union[str, Any], expires_delta: timedelta = None, extra_data: dict = None) -> str:
     """Crea un token JWT con el subject (user_id) y expiración."""
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -40,4 +38,8 @@ def create_access_token(subject: Union[str, Any], expires_delta: timedelta = Non
         expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     
     to_encode = {"exp": expire, "sub": str(subject)}
+    
+    if extra_data:
+        to_encode.update(extra_data)
+        
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
