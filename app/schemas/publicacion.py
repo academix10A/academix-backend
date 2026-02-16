@@ -75,7 +75,7 @@ class PublicacionBase(BaseModel):
         v = re.sub(r'\n\s*\n\s*\n+', '\n\n', v)
         
         # Validar longitud después de limpiar
-        if len(v) < 20:
+        if len(v) < 10:
             raise ValueError('El texto debe tener al menos 20 caracteres')
         
         # Bloquear código malicioso y etiquetas peligrosas

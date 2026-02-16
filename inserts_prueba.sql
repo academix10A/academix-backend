@@ -69,13 +69,13 @@ insert into usuario (nombre, apellido_paterno, apellido_materno, correo, contras
 
 insert into recurso (contenido, titulo, descripcion, url_archivo, fecha_publicacion, id_tipo, id_estado, id_subtema) values
 ('Introducción al álgebra lineal', 'Álgebra Lineal Básica', 'Apuntes introductorios', NULL, '2026-02-12 00:02:25', 1, 3, 1),
-(NULL, 'Guía de Derivadas PDF', 'Ejercicios resueltos', 'derivadas.pdf', '2026-02-12 00:02:25', 2, 3, 2),
+(NULL, 'Guía de Derivadas PDF', 'Ejercicios resueltos', 'https://academix/documentos/derivadas.pdf', '2026-02-12 00:02:25', 2, 3, 2),
 ('Teoría de integrales', 'Integrales', 'Resumen teórico', NULL, '2026-02-12 00:02:25', 1, 3, 3),
-(NULL, 'Cinemática en PDF', 'Movimiento rectilíneo', 'cinematica.pdf', '2026-02-12 00:02:25', 2, 3, 4),
+(NULL, 'Cinemática en PDF', 'Movimiento rectilíneo', 'https://academix/documentos/cinematica.pdf', '2026-02-12 00:02:25', 2, 3, 4),
 ('Explicación de leyes de Newton', 'Leyes de Newton', 'Contenido teórico', NULL, '2026-02-12 00:02:25', 1, 3, 5),
-(NULL, 'Estequiometría PDF', 'Ejercicios químicos', 'estequiometria.pdf', '2026-02-12 00:02:25', 2, 3, 6),
+(NULL, 'Estequiometría PDF', 'Ejercicios químicos', 'https://academix/documentos/estequiometria.pdf', '2026-02-12 00:02:25', 2, 3, 6),
 ('Estructura celular', 'Biología Celular', 'Resumen completo', NULL, '2026-02-12 00:02:25', 1, 3, 7),
-(NULL, 'Genética Básica', 'Introducción a genética', 'genetica.pdf', '2026-02-12 00:02:25', 2, 3, 8);
+(NULL, 'Genética Básica', 'Introducción a genética', 'https://academix/documentos/genetica.pdf', '2026-02-12 00:02:25', 2, 3, 8);
 
 insert into recurso_etiqueta (id_recurso, id_etiqueta) values
 (1, 1),
