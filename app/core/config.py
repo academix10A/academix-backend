@@ -9,9 +9,9 @@ class Settings(BaseSettings):
     .env o variables del sistema.
     """
 
-    PROJECT_NAME: str = "core_academix"
-    DATABASE_URL: str = "mysql+pymysql://root@localhost:3306/academix"
-    SECRET_KEY: str = "ZeroTwo"
+    PROJECT_NAME: str
+    DATABASE_URL: str
+    SECRET_KEY: str
 
     class Config:
         env_file = ".env"

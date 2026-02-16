@@ -8,7 +8,7 @@ from html import escape
 class PublicacionBase(BaseModel):
     titulo: Optional[str] = Field(None, min_length=5, max_length=250)
     descripcion: Optional[str] = Field(None, min_length=10, max_length=500)
-    texto: Optional[str] = Field(None, min_length=20, max_length=10000)
+    texto: Optional[str] = Field(None, min_length=10, max_length=10000)
     id_usuario: Optional[int] = Field(None, gt=0, description="ID del usuario debe ser positivo")
     id_estado: Optional[int] = Field(None, gt=0, description="ID del estado debe ser positivo")
     
@@ -108,7 +108,7 @@ class PublicacionBase(BaseModel):
 class PublicacionCreate(BaseModel):
     titulo: str = Field(..., min_length=5, max_length=250, description="Título de la publicación")
     descripcion: str = Field(..., min_length=10, max_length=500, description="Descripción breve")
-    texto: str = Field(..., min_length=20, max_length=10000, description="Contenido completo de la publicación")
+    texto: str = Field(..., min_length=10, max_length=10000, description="Contenido completo de la publicación")
     id_usuario: int = Field(..., gt=0, description="ID del usuario autor")
     id_estado: int = Field(..., gt=0, description="ID del estado de la publicación")
     
@@ -186,7 +186,7 @@ class PublicacionCreate(BaseModel):
 class PublicacionUpdate(BaseModel):
     titulo: Optional[str] = Field(None, min_length=5, max_length=250)
     descripcion: Optional[str] = Field(None, min_length=10, max_length=500)
-    texto: Optional[str] = Field(None, min_length=20, max_length=10000)
+    texto: Optional[str] = Field(None, min_length=10, max_length=10000)
     id_usuario: Optional[int] = Field(None, gt=0)
     id_estado: Optional[int] = Field(None, gt=0)
     
