@@ -237,7 +237,10 @@ def soft_delete_usuario(db: Session, usuario_id: int) -> Optional[Usuario]:
         )
 
 def is_active(user: Usuario) -> bool:
-    return user.estado is not None and user.estado.nombre == "activo"
+
+    return user.estado.nombre == "activo" if user.estado else False
+
+
 
 def authenticate(db: Session, correo: str, password: str) -> Optional[Usuario]:
 

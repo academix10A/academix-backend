@@ -1,13 +1,13 @@
 # ACADEMIX BACKEND
 
-Backend desarrollado con FastAPI para el proyecto Academix.
+Backend desarrollado con FastAPI (fastapi-mike) para el proyecto Academix.
 
 ## Tecnologías utilizadas
 
 - Python
 - FastAPI
 - Uvicorn
-- SQLAlchemy (si aplica en tu proyecto)
+- SQLAlchemy
 - MySQL (XAMPP)
 
 ## Requisitos previos
