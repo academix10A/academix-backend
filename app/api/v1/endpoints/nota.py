@@ -5,8 +5,12 @@ from typing import List
 from app.api.deps import get_db
 from app.crud import crud_nota
 from app.schemas.nota import Nota, NotaCreate, NotaUpdate
+from app.core.permissions import PermissionChecker
 
 router = APIRouter(prefix="/notas", tags=["Notas"])
+
+solo_admin = PermissionChecker(roles=["admin"])
+usuarios_activos = PermissionChecker(membresias=["premium", "gratis"])
 
 @router.get("/", response_model=List[Nota])
 def list_notas(

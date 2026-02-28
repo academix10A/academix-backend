@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     """
 
     PROJECT_NAME: str = "core_academix"
-    DATABASE_URL: str = "mysql+pymysql://Arath:arath07@localhost:3306/academix"
+    DATABASE_URL: str = "mysql+pymysql://root:arath07@localhost:3306/academix"
     SECRET_KEY: str = "ZeroTwo"
 
     class Config:

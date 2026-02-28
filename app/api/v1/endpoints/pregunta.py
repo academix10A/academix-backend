@@ -5,8 +5,13 @@ from typing import List
 from app.api.deps import get_db
 from app.crud import crud_pregunta
 from app.schemas.pregunta import Pregunta, PreguntaCreate, PreguntaUpdate
+from app.core.permissions import PermissionChecker
+from app.core.permissions import PermissionChecker
 
 router = APIRouter(prefix="/pregunta", tags=["Preguntas"])
+
+solo_admin = PermissionChecker(roles=["admin"])
+usuarios_activos = PermissionChecker(membresias=["premium", "gratis"])
 
 @router.get("/", response_model=List[Pregunta])
 def list_preguntas(
@@ -39,7 +44,7 @@ def read_Pregunta(pregunta_id: int, db: Session = Depends(get_db)):
 
 
 
-@router.post("/", response_model=Pregunta, status_code=201)
+@router.post("/", response_model=Pregunta, status_code=201, dependencies=[Depends(solo_admin)])
 def create_pregunta(pregunta_in: PreguntaCreate, db: Session = Depends(get_db)):
     """Crea un nuevo Pregunta."""
     # Validar que no exista Pregunta con ese contenido
@@ -54,7 +59,7 @@ def create_pregunta(pregunta_in: PreguntaCreate, db: Session = Depends(get_db)):
     return pregunta
 
 
-@router.put("/{pregunta_id}", response_model=Pregunta)
+@router.put("/{pregunta_id}", response_model=Pregunta,dependencies=[Depends(solo_admin)])
 def update_pregunta(
     pregunta_id: int, 
     pregunta_in: PreguntaUpdate, 
@@ -67,7 +72,7 @@ def update_pregunta(
     return pregunta
 
 
-@router.delete("/{pregunta_id}", response_model=Pregunta)
+@router.delete("/{pregunta_id}", response_model=Pregunta, dependencies=[Depends(solo_admin)])
 def delete_pregunta(pregunta_id: int, db: Session = Depends(get_db)):
     """Elimina un Pregunta."""
     pregunta = crud_pregunta.delete_pregunta(db, pregunta_id=pregunta_id)

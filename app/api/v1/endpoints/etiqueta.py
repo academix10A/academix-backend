@@ -5,6 +5,7 @@ from typing import List
 from app.api.deps import get_db
 from app.crud import crud_etiqueta
 from app.schemas.etiqueta import Etiqueta, EtiquetaCreate, EtiquetaUpdate
+from app.core.permissions import PermissionChecker
 
 router = APIRouter(prefix="/etiqueta", tags=["etiquetas"])
 

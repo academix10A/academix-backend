@@ -10,3 +10,4 @@ class Estado(Base):
     recursos = relationship("Recurso", back_populates="estado")
     publicaciones = relationship("Publicacion", back_populates="estado")
     usuarios = relationship("Usuario", back_populates="estado")
+    membresias = relationship("Membresia", back_populates="estado")
