@@ -5,8 +5,12 @@ from typing import List
 from app.api.deps import get_db
 from app.crud import crud_opcion
 from app.schemas.opcion import Opcion, OpcionCreate, OpcionUpdate
+from app.core.permissions import PermissionChecker
 
 router = APIRouter(prefix="/opcion", tags=["Opciones"])
+
+solo_admin = PermissionChecker(roles=["admin"])
+usuarios_activos = PermissionChecker(membresias=["premium", "gratis"])
 
 @router.get("/", response_model=List[Opcion])
 def list_opcions(
@@ -39,7 +43,7 @@ def read_Opcion(opcion_id: int, db: Session = Depends(get_db)):
 
 
 
-@router.post("/", response_model=Opcion, status_code=201)
+@router.post("/", response_model=Opcion, status_code=201, dependencies=[Depends(solo_admin)])
 def create_opcion(opcion_in: OpcionCreate, db: Session = Depends(get_db)):
     """Crea un nuevo Opcion."""
     # Validar que no exista Opcion con respuesta
@@ -54,7 +58,7 @@ def create_opcion(opcion_in: OpcionCreate, db: Session = Depends(get_db)):
     return opcion
 
 
-@router.put("/{opcion_id}", response_model=Opcion)
+@router.put("/{opcion_id}", response_model=Opcion, dependencies=[Depends(solo_admin)])
 def update_opcion(
     opcion_id: int, 
     opcion_in: OpcionUpdate, 
@@ -67,7 +71,7 @@ def update_opcion(
     return opcion
 
 
-@router.delete("/{opcion_id}", response_model=Opcion)
+@router.delete("/{opcion_id}", response_model=Opcion, dependencies=[Depends(solo_admin)])
 def delete_opcion(opcion_id: int, db: Session = Depends(get_db)):
     """Elimina un Opcion."""
     opcion = crud_opcion.delete_opcion(db, opcion_id=opcion_id)

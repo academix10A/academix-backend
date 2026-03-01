@@ -1,47 +1,51 @@
+from typing import List, Optional
+from fastapi import Depends, HTTPException, status
+from app.api.deps import get_current_active_user
 from app.models.usuario import Usuario
 
 
-
-def is_admin(user: Usuario) -> bool:
+class PermissionChecker:
     """
-    Verifica si un usuario es administrador.
-    Versión ROBUSTA - Maneja casos edge.
+    Verificador de permisos basado en roles y membresías.
+    Se instancia con los permisos requeridos y se usa como dependencia en los endpoints.
+    
+    Uso:
+        Depends(PermissionChecker(roles=["admin"]))
+        Depends(PermissionChecker(membresias=["premium", "gratis"]))
+        Depends(PermissionChecker(roles=["admin"], membresias=["premium"]))
     """
-    # Paso 1: ¿El usuario existe?
-    if not user:
-        return False
     
-    # Paso 2: ¿El usuario tiene un rol asignado?
-    if not user.rol:
-        return False
+    def __init__(
+        self, 
+        roles: Optional[List[str]] = None, 
+        membresias: Optional[List[str]] = None
+    ):
+        self.roles = [r.lower() for r in roles] if roles else []
+        self.membresias = [m.lower() for m in membresias] if membresias else []
     
-    # Paso 3: ¿El rol tiene un nombre?
-    if not user.rol.nombre:
-        return False
-    
-    # Paso 4: Comparar (insensible a mayúsculas/minúsculas)
-    return user.rol.nombre.lower() == "administrador"
-
-
-def has_role(user: Usuario, role_name: str) -> bool:
-    """
-    Verifica si un usuario tiene un rol específico.
-    FLEXIBLE - Funciona con cualquier rol.
-    
-    Ejemplo:
-        has_role(user, "administrador")  → True/False
-        has_role(user, "estudiante")     → True/False
-        has_role(user, "usuario")        → True/False
-    """
-    # Mismas validaciones que is_admin
-    if not user:
-        return False
-    
-    if not user.rol:
-        return False
-    
-    if not user.rol.nombre:
-        return False
-    
-    # Comparar con el rol que le pasemos
-    return user.rol.nombre.lower() == role_name.lower()
+    def __call__(
+        self, 
+        current_user: Usuario = Depends(get_current_active_user)
+    ) -> Usuario:
+        
+        # Extraer rol y membresía del usuario
+        user_rol = current_user.rol.nombre.lower() if current_user.rol else None
+        user_membresia = current_user.membresia.nombre.lower() if current_user.membresia else None
+        
+        # Admin siempre pasa — es el superusuario
+        if user_rol == "admin":
+            return current_user
+        
+        # Verificar rol
+        if self.roles and user_rol in self.roles:
+            return current_user
+        
+        # Verificar membresía
+        if self.membresias and user_membresia in self.membresias:
+            return current_user
+        
+        # Si no cumple ninguna condición
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No tienes permisos suficientes para realizar esta acción"
+        )

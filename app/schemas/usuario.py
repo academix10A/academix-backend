@@ -12,6 +12,7 @@ class UsuarioBase(BaseModel):
     correo: Optional[EmailStr] = None
     id_estado: Optional[int] = Field(None, gt=0, description="ID del estado debe ser positivo")
     id_rol: Optional[int] = Field(None, gt=0, description="ID del rol debe ser positivo")
+    id_membresia: Optional[int] = Field(None, gt=0, description="ID de la membresia debe ser positivo")
     
     @field_validator('nombre', 'apellido_paterno', 'apellido_materno')
     @classmethod
@@ -67,6 +68,7 @@ class UsuarioCreate(BaseModel):
     contrasena: str = Field(..., min_length=8, max_length=128, description="Contraseña (mínimo 8 caracteres)")
     id_rol: int = Field(..., gt=0, description="ID del rol (debe existir)")
     id_estado: int = Field(..., gt=0, description="ID del estado (debe existir)")
+    id_membresia: int = Field(..., gt=0, description="ID de la membresia (debe existir)")
     
     @field_validator('nombre', 'apellido_paterno', 'apellido_materno')
     @classmethod
@@ -173,6 +175,7 @@ class UsuarioUpdate(BaseModel):
     correo: Optional[EmailStr] = None
     id_estado: Optional[int] = Field(None, gt=0)
     id_rol: Optional[int] = Field(None, gt=0)
+    id_membresia: Optional[int] = Field(None, gt=0)
     contrasena: Optional[str] = Field(None, min_length=8, max_length=128)
     
     @field_validator('nombre', 'apellido_paterno', 'apellido_materno')
@@ -256,7 +259,7 @@ class Usuario(UsuarioBase):
 
 
 class UsuarioPublico(BaseModel):
-    """Schema PÚBLICO - Sin información sensible (mejor práctica)"""
+    """Schema PÚBLICO - Sin información sensible"""
     
     id_usuario: int
     nombre: str
@@ -265,6 +268,7 @@ class UsuarioPublico(BaseModel):
     correo: EmailStr
     id_estado: int
     id_rol: int
+    id_membresia: int
     fecha_registro: datetime
     
     class Config:

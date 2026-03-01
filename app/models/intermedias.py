@@ -29,3 +29,12 @@ tema_subtema = Table(
     Column('id_tema', Integer, ForeignKey('tema.id_tema'), primary_key=True),
     Column('id_subtema', Integer, ForeignKey('subtema.id_subtema'), primary_key=True)
 )
+
+
+# Membresias - beneficios
+membresias_beneficios = Table(
+    'membresias_beneficios',
+    Base.metadata,
+    Column('id_membresia', Integer, ForeignKey('membresia.id_membresia'), primary_key=True),
+    Column('id_beneficio', Integer, ForeignKey('beneficio.id_beneficio'), primary_key=True)
+)
