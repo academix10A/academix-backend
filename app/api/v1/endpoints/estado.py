@@ -5,8 +5,12 @@ from typing import List
 from app.api.deps import get_db
 from app.crud import crud_estado
 from app.schemas.estado import Estado, EstadoCreate, EstadoUpdate
+from app.core.permissions import PermissionChecker
 
 router = APIRouter(prefix="/estado", tags=["Estados"])
+
+solo_admin = PermissionChecker(roles=["admin"])
+usuarios_activos = PermissionChecker(membresias=["premium", "gratis"])
 
 @router.get("/", response_model=List[Estado])
 def list_estados(
@@ -38,7 +42,7 @@ def read_estado(estado_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="estado no encontrado")
     return estado
 
-@router.post("/", response_model=Estado, status_code=201)
+@router.post("/", response_model=Estado, status_code=201, dependencies=[Depends(solo_admin)])
 def create_estado(estado_in: EstadoCreate, db: Session = Depends(get_db)):
     """Crea un nuevo estado."""
     # Validar que no exista estado con ese nombre
@@ -53,7 +57,7 @@ def create_estado(estado_in: EstadoCreate, db: Session = Depends(get_db)):
     return estado
 
 
-@router.put("/{estado_id}", response_model=Estado)
+@router.put("/{estado_id}", response_model=Estado, dependencies=[Depends(solo_admin)])
 def update_estado(
     estado_id: int, 
     estado_in: EstadoUpdate, 
@@ -66,7 +70,7 @@ def update_estado(
     return estado
 
 
-@router.delete("/{estado_id}", response_model=Estado)
+@router.delete("/{estado_id}", response_model=Estado, dependencies=[Depends(solo_admin)])
 def delete_estado(estado_id: int, db: Session = Depends(get_db)):
     """Elimina un estado."""
     estado = crud_estado.delete_estado(db, estado_id=estado_id)

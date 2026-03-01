@@ -63,6 +63,7 @@ class ExamenBase(BaseModel):
 class ExamenCreate(BaseModel):
     titulo: str = Field(..., min_length=3, max_length=200, description="Título del examen")
     descripcion: str = Field(..., min_length=10, max_length=1000, description="Descripción del examen")
+    cantidad_preguntas: int = Field(..., gt=0, le=100, description="Cantidad de preguntas debe ser entre 1 y 100")
     id_subtema: int = Field(..., gt=0, description="ID del subtema (debe existir)")
     
     @field_validator('titulo')

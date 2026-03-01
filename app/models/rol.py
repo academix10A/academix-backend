@@ -8,3 +8,4 @@ class Rol(Base):
     
     # Relación 1:M (Un rol puede tener muchos usuarios)
     usuarios = relationship("Usuario", back_populates="rol")
+    membresias = relationship("Membresia", back_populates="roles")

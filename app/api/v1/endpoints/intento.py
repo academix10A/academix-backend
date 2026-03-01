@@ -6,6 +6,7 @@ from app.api.deps import get_db
 from app.crud import crud_intento
 from app.schemas.intento import Intento, IntentoCreate, IntentoUpdate
 from app.schemas.usuario import Usuario
+from app.core.permissions import PermissionChecker
 
 router = APIRouter(prefix="/intento", tags=["Intentos"])
 

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 # from sqladmin import Admin
 # from app.admin.views import UserAdmin
 from app.db.session import init_db
-from app.api.v1.api import tema, usuarios, auth, recursos,examen, subtema, estado, rol, tipo, etiqueta, publicaciones, nota, pregunta, opcion, intento
+from app.api.v1.api import tema, usuarios, auth, recursos,examen, subtema, estado, rol, tipo, etiqueta, publicaciones, nota, pregunta, opcion, intento, membresia, beneficio
 import logging
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -40,6 +40,8 @@ app.add_middleware(
 # Incluir routers
 app.include_router(auth.router, prefix="/api")
 app.include_router(usuarios.router, prefix="/api")
+app.include_router(beneficio.router, prefix="/api")
+app.include_router(membresia.router, prefix="/api")
 app.include_router(rol.router, prefix="/api")
 app.include_router(nota.router, prefix="/api")
 app.include_router(publicaciones.router, prefix="/api")
