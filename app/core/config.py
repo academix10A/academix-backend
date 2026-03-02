@@ -2,15 +2,10 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    """Configuración principal de la aplicación.
-
-    Los valores por defecto permiten ejecutar el proyecto sin necesidad de
-    variables de entorno, pero se pueden sobreescribir mediante un archivo
-    .env o variables del sistema.
-    """
+    """Configuración principal de la aplicación."""
 
     PROJECT_NAME: str = "core_academix"
-    DATABASE_URL: str = "mysql+pymysql://Arath:arath07@localhost:3306/academix"
+    DATABASE_URL: str = "mysql+pymysql://root:@localhost/academix"
     SECRET_KEY: str = "ZeroTwo"
 
     class Config:
