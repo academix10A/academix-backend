@@ -10,7 +10,7 @@ from app.core.permissions import PermissionChecker
 router = APIRouter(prefix="/examen", tags=["Examenes"])
 
 solo_admin = PermissionChecker(roles=["admin"])
-usuarios_activos = PermissionChecker(membresias=["premium", "gratis"])
+usuarios_activos = PermissionChecker(membresias=["Plan Gratuito", "Plan Premium Mensual", "Plan Premium Semestral", "Plan Premium Anual"])
 
 @router.get("/", response_model=List[Examen], dependencies=[Depends(usuarios_activos)])
 def list_examen(

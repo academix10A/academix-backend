@@ -50,6 +50,7 @@ def init_db() -> None:
     from app.models.examen import Examen
     from app.models.membresia import Membresia
     from app.models.beneficio import Beneficio
+    from app.models.usuario_membresia import UsuarioMembresia
     
     # Tablas con dependencias nivel 3
     from app.models.nota import Nota
