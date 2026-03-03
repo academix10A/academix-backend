@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware  # ← AGREGAR ESTO
 # from sqladmin import Admin
 # from app.admin.views import UserAdmin
 from app.db.session import init_db
@@ -14,7 +15,6 @@ app = FastAPI(
     title="Academix API",
     description="API para plataforma de biblioteca virtual y hub de estudio colaborativo",
     version="1.0.0",
-    
 )
 
 # Configuración de CORS
@@ -23,6 +23,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",  # React en desarrollo
         "http://localhost:5173",  # Si usas Vite
+        "http://127.0.0.1:5173",
         "http://192.168.152.1:3000",  # Tu dominio en desarrollo
         #"https://tu-dominio.com"  # Tu dominio en producción
     ],
@@ -31,6 +32,17 @@ app.add_middleware(
     allow_headers=["*"],  # Permite todos los headers
 )
 
+# # ← AGREGAR ESTO (DESPUÉS DE CREAR app)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=[
+#         "http://localhost:5173",
+#         "http://127.0.0.1:5173",
+#     ],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 # Configuración de Admin (descomentar cuando esté listo):
 # from app.db.session import engine
@@ -73,4 +85,4 @@ logging.basicConfig(
         logging.FileHandler("app.log"),
         logging.StreamHandler()
     ]
-)    
+)

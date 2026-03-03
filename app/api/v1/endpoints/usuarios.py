@@ -21,7 +21,7 @@ from app.core.permissions import PermissionChecker
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/usuarios", tags=["usuarios"])
+router = APIRouter(prefix="/usuarios", tags=["Usuarios"])
 
 request_tracker = {}
 
