@@ -68,7 +68,6 @@ def listar_usuarios(
     limit: int = Query(100, ge=1, le=100, description="Número máximo de registros"),
     id_estado: Optional[int] = Query(None, gt=0, description="Filtrar por estado"),
     id_rol: Optional[int] = Query(None, gt=0, description="Filtrar por rol"),
-    id_membresia: Optional[int] = Query(None, gt=0, description="Filtrar por membresia"),
     db: Session = Depends(get_db),
     current_user: UsuarioModel = Depends(get_current_active_user)
 ):
@@ -87,8 +86,7 @@ def listar_usuarios(
         skip=skip, 
         limit=limit,
         id_estado=id_estado,
-        id_rol=id_rol,
-        id_membresia=id_membresia
+        id_rol=id_rol
     )
     
     return usuarios

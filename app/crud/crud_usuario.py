@@ -8,7 +8,6 @@ from app.core.security import get_password_hash, verify_password
 from app.models.usuario import Usuario
 from app.models.rol import Rol
 from app.models.estado import Estado
-from app.models.membresia import Membresia
 from app.schemas.usuario import UsuarioCreate, UsuarioUpdate
 
 def get_usuario(db: Session, usuario_id: int) -> Optional[Usuario]:
@@ -41,8 +40,7 @@ def get_usuarios(
     skip: int = 0, 
     limit: int = 100,
     id_estado: Optional[int] = None,
-    id_rol: Optional[int] = None,
-    id_membresia: Optional[int] = None
+    id_rol: Optional[int] = None
 ) -> List[Usuario]:
     if skip < 0:
         skip = 0
@@ -58,8 +56,6 @@ def get_usuarios(
     if id_rol and id_rol > 0:
         query = query.filter(Usuario.id_rol == id_rol)
         
-    if id_membresia and id_membresia > 0:
-        query = query.filter(Usuario.id_membresia == id_membresia)
     
     return query.offset(skip).limit(limit).all()
 
@@ -67,8 +63,7 @@ def get_usuarios(
 def count_usuarios(
     db: Session,
     id_estado: Optional[int] = None,
-    id_rol: Optional[int] = None ,
-    id_membresia: Optional[int] = None
+    id_rol: Optional[int] = None 
 ) -> int:
     """
     Cuenta el total de usuarios con filtros opcionales.
@@ -83,8 +78,6 @@ def count_usuarios(
     if id_rol and id_rol > 0:
         query = query.filter(Usuario.id_rol == id_rol)
     
-    if id_membresia and id_membresia > 0:
-        query = query.filter(Usuario.id_membresia == id_membresia)
     
     return query.count()
 
@@ -103,14 +96,6 @@ def _validar_estado_existe(db: Session, id_estado: int) -> None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"El estado con ID {id_estado} no existe"
-        )
-def _validar_membresia_existe(db: Session, id_membresia: int) -> None:
-    """Valida que la membresia exista en la BD."""
-    membresia = db.query(Membresia).filter(Membresia.id_membresia == id_membresia).first()
-    if not membresia:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"El estado con ID {id_membresia} no existe"
         )
 
 def _validar_correo_unico(db: Session, correo: str, usuario_id: Optional[int] = None) -> None:
@@ -134,9 +119,6 @@ def create_usuario(db: Session, usuario_in: UsuarioCreate) -> Usuario:
 
     _validar_rol_existe(db, usuario_in.id_rol)
     
-    id_membresia = usuario_in.id_membresia or 1 
-    _validar_membresia_existe(db, id_membresia)
-    
     _validar_correo_unico(db, usuario_in.correo)
 
     id_estado = usuario_in.id_estado or 1  # default = 1 (activo)
@@ -151,8 +133,7 @@ def create_usuario(db: Session, usuario_in: UsuarioCreate) -> Usuario:
         correo=usuario_in.correo.lower().strip(),  
         contrasena_hash=contrasena_hash,
         id_rol=usuario_in.id_rol,
-        id_estado=id_estado,
-        id_membresia=id_membresia
+        id_estado=id_estado
     )
     
     try:
@@ -200,9 +181,6 @@ def update_usuario(
     
     if "id_estado" in update_data and update_data["id_estado"]:
         _validar_estado_existe(db, update_data["id_estado"])
-    
-    if "id_membresia" in update_data and update_data["id_menbresia"]:
-        _validar_membresia_existe(db, update_data["id_membresia"])
     
     if "contrasena" in update_data and update_data["contrasena"]:
         # Hashear nueva contraseña

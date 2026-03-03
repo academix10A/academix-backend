@@ -38,3 +38,4 @@ membresias_beneficios = Table(
     Column('id_membresia', Integer, ForeignKey('membresia.id_membresia'), primary_key=True),
     Column('id_beneficio', Integer, ForeignKey('beneficio.id_beneficio'), primary_key=True)
 )
+

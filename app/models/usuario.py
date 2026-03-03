@@ -16,8 +16,6 @@ class Usuario(Base):
     # Clave foránea
     id_rol = Column(Integer, ForeignKey("rol.id_rol"))
     id_estado = Column(Integer, ForeignKey("estado.id_estado"), default=1)
-    id_membresia = Column(Integer, ForeignKey("membresia.id_membresia"), nullable=True)
-
     
     # Relaciones
     rol = relationship("Rol", back_populates="usuarios")
@@ -26,4 +24,5 @@ class Usuario(Base):
     intentos = relationship("Intento", back_populates="usuario")
     publicaciones = relationship("Publicacion", back_populates="usuario")
     estado = relationship("Estado", back_populates="usuarios")
-    membresia = relationship("Membresia", back_populates="usuarios")
+    membresias = relationship("UsuarioMembresia", back_populates="usuario",cascade="all, delete-orphan")
+

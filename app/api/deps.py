@@ -49,7 +49,7 @@ def get_current_user(
         db.query(Usuario)
         .options(
             joinedload(Usuario.rol),
-            joinedload(Usuario.membresia)
+            joinedload(Usuario.membresias)
         )
         .filter(Usuario.id_usuario == int(user_id))
         .first()

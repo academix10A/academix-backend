@@ -31,20 +31,17 @@ def create_membresia(db: Session, membresia_in: MembresiaCreate) -> Membresia:
         descripcion=membresia_in.descripcion,
         costo=membresia_in.costo,
         tipo=membresia_in.tipo,
-        fecha_inicio=membresia_in.fecha_inicio,
-        fecha_fin=membresia_in.fecha_fin,
-        id_rol=membresia_in.id_rol,
-        id_estado=membresia_in.id_estado,
+        duracion_dias=membresia_in.duracion_dias
     )
-    db.add(db_obj)
-    db.flush()  # genera el id_membresia sin hacer commit
 
-    # Asociar beneficios a través de la tabla intermedia
+    db.add(db_obj)
+    db.flush()
+
     if membresia_in.beneficios_ids:
         beneficios = db.query(Beneficio).filter(
             Beneficio.id_beneficio.in_(membresia_in.beneficios_ids)
         ).all()
-        db_obj.beneficios = beneficios  # SQLAlchemy maneja la tabla intermedia solo
+        db_obj.beneficios = beneficios
 
     db.commit()
     db.refresh(db_obj)

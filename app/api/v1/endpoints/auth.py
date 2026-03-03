@@ -40,8 +40,7 @@ def login_access_token(
         subject=str(user.id_usuario), expires_delta=access_token_expires,
         extra_data={
             "email": user.correo,
-            "rol": user.rol.nombre if user.rol else None,
-            "membresia": user.membresia.nombre if user.membresia else None  
+            "rol": user.rol.nombre if user.rol else None 
         }
     )
     return Token(access_token=access_token, token_type="bearer")
@@ -56,8 +55,7 @@ def login_refresh_token(
             subject=str(current_user.id_usuario),
             extra_data={
                 "email": current_user.correo,
-                "rol": current_user.rol.nombre if current_user.rol else None,
-                "membresia": current_user.membresia.nombre if current_user.membresia else None  
+                "rol": current_user.rol.nombre if current_user.rol else None
             }
         ),
         token_type="bearer",
