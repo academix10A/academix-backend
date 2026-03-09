@@ -24,3 +24,6 @@ class Usuario(Base):
     intentos = relationship("Intento", back_populates="usuario")
     publicaciones = relationship("Publicacion", back_populates="usuario")
     estado = relationship("Estado", back_populates="usuarios")
+    
+    # ← AGREGAR ESTA LÍNEA
+    membresias = relationship("UsuarioMembresia", back_populates="usuario")

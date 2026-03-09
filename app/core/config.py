@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "core_academix"
     DATABASE_URL: str = "mysql+pymysql://root:@localhost/academix"
     SECRET_KEY: str = "ZeroTwo"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 20160
 
     class Config:
         env_file = ".env"
