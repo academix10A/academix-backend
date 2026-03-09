@@ -60,6 +60,8 @@ def init_db() -> None:
     
     # Tablas con dependencias nivel 4
     from app.models.opcion import Opcion
+    from app.models.usuario_membresia import UsuarioMembresia
+    from app.models.membresia import Membresia
     
     # Ahora sí crear todas las tablas
     Base.metadata.create_all(bind=engine)
