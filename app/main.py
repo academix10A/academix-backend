@@ -3,8 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware  # ← AGREGAR ESTO
 # from sqladmin import Admin
 # from app.admin.views import UserAdmin
 from app.db.session import init_db
-from app.api.v1.api import tema, usuarios, auth, recursos,examen, subtema, estado, rol, tipo, etiqueta, publicaciones, nota, pregunta, opcion, intento
+from app.api.v1.api import tema, usuarios, auth, recursos,examen, subtema, estado, rol, tipo, etiqueta, publicaciones, nota, pregunta, opcion, intento, membresia, beneficio
 import logging
+from fastapi.middleware.cors import CORSMiddleware
 
 
 # Inicializar base de datos (crear tablas)
@@ -16,17 +17,32 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# ← AGREGAR ESTO (DESPUÉS DE CREAR app)
+# Configuración de CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",
+        "http://localhost:3000",  # React en desarrollo
+        "http://localhost:5173",  # Si usas Vite
         "http://127.0.0.1:5173",
+        "http://192.168.152.1:3000",  # Tu dominio en desarrollo
+        #"https://tu-dominio.com"  # Tu dominio en producción
     ],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Permite todos los métodos (GET, POST, etc.)
+    allow_headers=["*"],  # Permite todos los headers
 )
+
+# # ← AGREGAR ESTO (DESPUÉS DE CREAR app)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=[
+#         "http://localhost:5173",
+#         "http://127.0.0.1:5173",
+#     ],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 # Configuración de Admin (descomentar cuando esté listo):
 # from app.db.session import engine
@@ -36,6 +52,8 @@ app.add_middleware(
 # Incluir routers
 app.include_router(auth.router, prefix="/api")
 app.include_router(usuarios.router, prefix="/api")
+app.include_router(beneficio.router, prefix="/api")
+app.include_router(membresia.router, prefix="/api")
 app.include_router(rol.router, prefix="/api")
 app.include_router(nota.router, prefix="/api")
 app.include_router(publicaciones.router, prefix="/api")

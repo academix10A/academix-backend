@@ -15,6 +15,7 @@ from app.schemas.usuario import (
     UsuarioUpdate,
     UsuarioConRol
 )
+from app.core.permissions import PermissionChecker
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)

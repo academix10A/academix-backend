@@ -256,7 +256,7 @@ class Usuario(UsuarioBase):
 
 
 class UsuarioPublico(BaseModel):
-    """Schema PÚBLICO - Sin información sensible (mejor práctica)"""
+    """Schema PÚBLICO - Sin información sensible"""
     
     id_usuario: int
     nombre: str

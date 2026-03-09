@@ -5,8 +5,9 @@ from typing import List
 from app.api.deps import get_db
 from app.crud import crud_rol
 from app.schemas.rol import Rol, RolCreate, RolUpdate
+from app.core.permissions import PermissionChecker
 
-router = APIRouter(prefix="/rol", tags=["roles"])
+router = APIRouter(prefix="/rol", tags=["Roles"])
 
 @router.get("/", response_model=List[Rol])
 def list_rol(

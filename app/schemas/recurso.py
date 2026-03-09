@@ -9,9 +9,9 @@ class RecursoBase(BaseModel):
     """Base con campos comunes"""
     titulo: Optional[str] = Field(None, min_length=2, max_length=200)
     descripcion: Optional[str] = Field(None, max_length=500)
-    contenido: Optional[str] = Field(None, max_length=5000)
+    contenido: Optional[str] = Field(None, max_length=200000)
     url_archivo: Optional[str] = Field(None, max_length=1000)
-    id_tipo: Optional[int] = Field(None, gt=0, description="ID del tipo (1=PDF, 2=Video, 3=Audio)")
+    id_tipo: Optional[int] = Field(None, gt=0, description="ID del tipo (1=PDF, 2=Texto)")
     id_estado: Optional[int] = Field(None, gt=0, description="ID del estado")
     id_subtema: Optional[int] = Field(None, gt=0, description="ID del subtema")
     

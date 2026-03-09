@@ -5,8 +5,9 @@ from typing import List
 from app.api.deps import get_db
 from app.crud import crud_tema
 from app.schemas.tema import Tema, TemaCreate, TemaUpdate
+from app.core.permissions import PermissionChecker
 
-router = APIRouter(prefix="/temas", tags=["temas"])
+router = APIRouter(prefix="/temas", tags=["Temas"])
 
 @router.get("/", response_model=List[Tema])
 def list_temas(
