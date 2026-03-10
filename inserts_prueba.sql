@@ -323,3 +323,30 @@ insert into usuario_recurso (id_usuario, id_recurso) values (1, 1);
 insert into usuario_recurso (id_usuario, id_recurso) values (1, 2);
 insert into usuario_recurso (id_usuario, id_recurso) values (2, 3);
 insert into usuario_recurso (id_usuario, id_recurso) values (3, 4);
+
+-- 9. Nuevas tablas vista de recursos y progreso de lectura.
+insert into vista_contenido (id_usuario, id_recurso, fecha_vista) values (1,1,'2026-03-03 10:00:00');
+insert into vista_contenido (id_usuario, id_recurso, fecha_vista) values (2,1,'2026-03-03 10:05:00');
+insert into vista_contenido (id_usuario, id_recurso, fecha_vista) values (3,2,'2026-03-03 10:10:00');
+insert into vista_contenido (id_usuario, id_recurso, fecha_vista) values (4,3,'2026-03-03 10:12:00');
+insert into vista_contenido (id_usuario, id_recurso, fecha_vista) values (5,4,'2026-03-03 10:15:00');
+insert into vista_contenido (id_usuario, id_recurso, fecha_vista) values (6,1,'2026-03-03 10:18:00');
+insert into vista_contenido (id_usuario, id_recurso, fecha_vista) values (7,2,'2026-03-03 10:20:00');
+
+insert into vista_contenido (id_usuario, id_publicacion, fecha_vista) values (1,1,'2026-03-03 11:00:00');
+insert into vista_contenido (id_usuario, id_publicacion, fecha_vista) values (2,1,'2026-03-03 11:02:00');
+insert into vista_contenido (id_usuario, id_publicacion, fecha_vista) values (3,2,'2026-03-03 11:05:00');
+insert into vista_contenido (id_usuario, id_publicacion, fecha_vista) values (4,2,'2026-03-03 11:06:00');
+insert into vista_contenido (id_usuario, id_publicacion, fecha_vista) values (5,3,'2026-03-03 11:10:00');
+insert into vista_contenido (id_usuario, id_publicacion, fecha_vista) values (6,3,'2026-03-03 11:12:00');
+
+insert into progreso_contenido (id_usuario, id_recurso, porcentaje_leido, ultima_posicion, completado) values (1,1,100,5200,true);
+insert into progreso_contenido (id_usuario, id_recurso, porcentaje_leido, ultima_posicion, completado) values (2,1,65,3400,false);
+insert into progreso_contenido (id_usuario, id_recurso, porcentaje_leido, ultima_posicion, completado) values (3,2,40,2100,false);
+insert into progreso_contenido (id_usuario, id_recurso, porcentaje_leido, ultima_posicion, completado) values (4,3,90,4800,false);
+insert into progreso_contenido (id_usuario, id_recurso, porcentaje_leido, ultima_posicion, completado) values (5,4,100,6000,true);
+
+insert into progreso_contenido (id_usuario, id_publicacion, porcentaje_leido, ultima_posicion, completado) values (1,1,100,1800,true);
+insert into progreso_contenido (id_usuario, id_publicacion, porcentaje_leido, ultima_posicion, completado) values (2,1,50,900,false);
+insert into progreso_contenido (id_usuario, id_publicacion, porcentaje_leido, ultima_posicion, completado) values (3,2,75,1200,false);
+insert into progreso_contenido (id_usuario, id_publicacion, porcentaje_leido, ultima_posicion, completado) values (4,3,30,500,false);

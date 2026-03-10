@@ -19,17 +19,55 @@ def get_notas(
     return db.query(Nota).offset(skip).limit(limit).all()
 
 
+def get_notas_usuario(
+    db: Session, 
+    id_usuario: int,
+    skip: int = 0, 
+    limit: int = 20
+) -> List[Nota]:
+    """Obtiene todas las notas (privadas + compartidas) de un usuario específico."""
+    return db.query(Nota).filter(
+        Nota.id_usuario == id_usuario
+    ).order_by(Nota.fecha_actualizacion.desc()).offset(skip).limit(limit).all()
+
+
+def get_notas_privadas_usuario(
+    db: Session, 
+    id_usuario: int,
+    skip: int = 0, 
+    limit: int = 20
+) -> List[Nota]:
+    """Obtiene solo las notas privadas de un usuario específico."""
+    return db.query(Nota).filter(
+        Nota.id_usuario == id_usuario,
+        Nota.es_compartida == False
+    ).order_by(Nota.fecha_actualizacion.desc()).offset(skip).limit(limit).all()
+
+
+def get_notas_compartidas_usuario(
+    db: Session, 
+    id_usuario: int,
+    skip: int = 0, 
+    limit: int = 20
+) -> List[Nota]:
+    """Obtiene las notas compartidas de un usuario específico."""
+    return db.query(Nota).filter(
+        Nota.id_usuario == id_usuario,
+        Nota.es_compartida == True
+    ).order_by(Nota.fecha_actualizacion.desc()).offset(skip).limit(limit).all()
+
+
 def get_nota_by_contenido(db: Session, contenido: str) -> Optional[Nota]:
     """Obtiene un recurso por su contenido."""
     return db.query(Nota).filter(Nota.contenido == contenido).first()
 
 
-def create_nota(db: Session, nota_in: NotaCreate) -> Nota:
+def create_nota(db: Session, nota_in: NotaCreate, id_usuario: int) -> Nota:
     """Crea un nota nuevo."""
     db_obj = Nota(
         contenido=nota_in.contenido,
         es_compartida=nota_in.es_compartida,
-        id_usuario=nota_in.id_usuario,
+        id_usuario=id_usuario,
         id_recurso=nota_in.id_recurso
     )
     db.add(db_obj)

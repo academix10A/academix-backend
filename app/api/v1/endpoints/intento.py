@@ -1,14 +1,45 @@
 # routers/Intentos.py
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List
-from app.api.deps import get_db
+from app.api.deps import get_db, get_current_active_user
 from app.crud import crud_intento
 from app.schemas.intento import Intento, IntentoCreate, IntentoUpdate
 from app.schemas.usuario import Usuario
 from app.core.permissions import PermissionChecker
 
 router = APIRouter(prefix="/intento", tags=["Intentos"])
+
+
+@router.get("/usuario")
+def obtener_intentos_usuario(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_active_user)
+):
+    """Obtiene todos los intentos de exámenes del usuario actual."""
+    intentos = crud_intento.get_intentos_usuario(db, id_usuario=current_user.id_usuario, skip=skip, limit=limit)
+    return intentos
+
+
+@router.get("/usuario/examen/{id_examen}")
+def obtener_intento_examen_usuario(
+    id_examen: int,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_active_user)
+):
+    """Obtiene el intento del usuario actual para un examen específico."""
+    intento = crud_intento.get_intento_by_user_and_exam(db, id_usuario=current_user.id_usuario, id_examen=id_examen)
+    
+    if not intento:
+        raise HTTPException(
+            status_code=404,
+            detail="No se encontró intento para este examen"
+        )
+    
+    return intento
+
 
 @router.get("/", response_model=List[Intento])
 def list_intentos(
@@ -42,13 +73,17 @@ def read_Intento(intento_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=Intento, status_code=201)
-def create_intento(intento_in: IntentoCreate, db: Session = Depends(get_db)):
+def create_intento(
+    intento_in: IntentoCreate, 
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_active_user)
+):
     """Crea un nuevo Intento validando que el usuario no repita el mismo examen."""
     
     # Buscamos si ya existe un registro con el mismo usuario Y el mismo examen [cite: 199, 209]
     intento_exists = crud_intento.get_intento_by_user_and_exam(
         db, 
-        id_usuario=intento_in.id_usuario, 
+        id_usuario=current_user.id_usuario, 
         id_examen=intento_in.id_examen
     )
     
@@ -58,7 +93,8 @@ def create_intento(intento_in: IntentoCreate, db: Session = Depends(get_db)):
             detail=f"Este '{Usuario}' ya ha realizado un intento para este examen."
         )
     
-    intento = crud_intento.create_intento(db, intento_in=intento_in)
+    # Crear el intento usando el id_usuario del token
+    intento = crud_intento.create_intento(db, intento_in=intento_in, id_usuario=current_user.id_usuario)
     return intento
 
 

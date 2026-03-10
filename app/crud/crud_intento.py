@@ -19,6 +19,18 @@ def get_intentos(
     return db.query(Intento).offset(skip).limit(limit).all()
 
 
+def get_intentos_usuario(
+    db: Session, 
+    id_usuario: int,
+    skip: int = 0, 
+    limit: int = 20
+) -> List[Intento]:
+    """Obtiene todos los intentos de un usuario específico."""
+    return db.query(Intento).filter(
+        Intento.id_usuario == id_usuario
+    ).order_by(Intento.fecha.desc()).offset(skip).limit(limit).all()
+
+
 def get_intento_by_calificacion(db: Session, calificacion: str) -> Optional[Intento]:
     """Obtiene un intento por su calificacion."""
     return db.query(Intento).filter(Intento.calificacion == calificacion).first()
@@ -29,11 +41,11 @@ def get_intento_by_user_and_exam(db: Session, id_usuario: int, id_examen: int):
         Intento.id_examen == id_examen
     ).first()
 
-def create_intento(db: Session, intento_in: IntentoCreate) -> Intento:
+def create_intento(db: Session, intento_in: IntentoCreate, id_usuario: int) -> Intento:
     """Crea un intento nuevo."""
     db_obj = Intento(
         calificacion=intento_in.calificacion,
-        id_usuario=intento_in.id_usuario,
+        id_usuario=id_usuario,
         id_examen=intento_in.id_examen
     )
     db.add(db_obj)

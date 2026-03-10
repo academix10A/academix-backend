@@ -1,5 +1,5 @@
-from pydantic import BaseModel
-from typing import Optional
+from pydantic import BaseModel, Field
+from typing import Optional, Dict
 from datetime import datetime
 
 class IntentoBase(BaseModel):
@@ -8,9 +8,8 @@ class IntentoBase(BaseModel):
     id_examen: Optional[int] = None
     
 class IntentoCreate(IntentoBase):
-    calificacion: float
-    id_usuario: int
-    id_examen: int
+    id_examen: int = Field(..., gt=0, description="ID del examen")
+    respuestas: Dict[int, int] = Field(..., description="Respuestas del usuario")
     
 class IntentoUpdate(IntentoBase):
     pass

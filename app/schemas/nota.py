@@ -72,8 +72,8 @@ class NotaBase(BaseModel):
 class NotaCreate(BaseModel):
     contenido: str = Field(..., min_length=1, max_length=5000, description="Contenido de la nota")
     es_compartida: bool = Field(..., description="Si la nota es compartida con otros usuarios")
-    id_usuario: int = Field(..., gt=0, description="ID del usuario que crea la nota")
-    id_recurso: int = Field(..., gt=0, description="ID del recurso asociado")
+    id_usuario: Optional[int] = Field(None, gt=0, description="ID del usuario que crea la nota (opcional, se usa el del token)")
+    id_recurso: Optional[int] = Field(None, gt=0, description="ID del recurso asociado")
     
     @field_validator('contenido')
     @classmethod
