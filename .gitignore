@@ -1,0 +1,29 @@
+# --- Python & FastAPI ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+*.log
+
+# --- FastAPI-Mike / DB locales ---
+# Ignoramos bases de datos locales para que no ensucien el repo
+*.db
+*.sqlite3
+
+# --- Variables de Entorno (CRÍTICO) ---
+.env
+.env.*
+!.env.example
+
+# --- Docker ---
+# NO ignores el 'Dockerfile' ni el 'docker-compose.yml'
+# Ignora solo archivos temporales o de datos persistentes
+.dockerignore
+data/
+pgdata/
+
+# --- IDEs ---
+.vscode/
+.idea/
