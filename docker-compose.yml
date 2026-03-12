@@ -1,8 +1,33 @@
-version: '3.8'
 services:
-  api:
+
+  mysql:
+    image: mysql:8
+    container_name: academix-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: academix
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
     build: .
+    container_name: academix-backend
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
     ports:
       - "8000:8000"
-    env_file:
-      - .env
+    environment:
+      DATABASE_URL: mysql+pymysql://root:rootpassword@mysql:3306/academix
+
+volumes:
+  mysql_data:
