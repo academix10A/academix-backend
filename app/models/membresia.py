@@ -15,11 +15,10 @@ class Membresia(Base):
     
     #Clave Foranea
     id_estado = Column(Integer, ForeignKey("estado.id_estado"), default=1)
-    id_rol = Column(Integer, ForeignKey("rol.id_rol"))
+
     
     #Relaciones
     usuarios = relationship("Usuario", back_populates="membresia")
     estado = relationship("Estado", back_populates="membresias")
     beneficios = relationship("Beneficio", secondary=membresias_beneficios, back_populates="membresias")
-    roles = relationship("Rol", back_populates="membresias")
     

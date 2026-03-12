@@ -33,7 +33,6 @@ def create_membresia(db: Session, membresia_in: MembresiaCreate) -> Membresia:
         tipo=membresia_in.tipo,
         fecha_inicio=membresia_in.fecha_inicio,
         fecha_fin=membresia_in.fecha_fin,
-        id_rol=membresia_in.id_rol,
         id_estado=membresia_in.id_estado,
     )
     db.add(db_obj)
