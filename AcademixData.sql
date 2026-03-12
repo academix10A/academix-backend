@@ -260,6 +260,10 @@ INSERT INTO usuario (id_usuario, nombre, apellido_paterno, apellido_materno, cor
 INSERT INTO usuario (id_usuario, nombre, apellido_paterno, apellido_materno, correo, contrasena_hash, fecha_registro, id_rol, id_estado, id_membresia) VALUES (3,'Aratheo','Porcayo','Mercado','aratheo@gmail.com','$argon2id$v=19$m=65536,t=3,p=4$R2jtfS+F8H5vTem99/5/bw$g9FyzaAqd2QuJRKgEqr8DMv+XK3yOePhOpEefvSrhh0','2026-02-28 02:39:54',1,1,1);
 INSERT INTO usuario (id_usuario, nombre, apellido_paterno, apellido_materno, correo, contrasena_hash, fecha_registro, id_rol, id_estado, id_membresia) VALUES (14,'Jafet Jeshua','Gamboa','Lopez','jafetgamboa6@gmail.com','$argon2id$v=19$m=65536,t=3,p=4$e8+5V0rJ+X+vFUII4RxjzA$KFc6foCOPs8D23iFAIesdlfpwYeeB07hOhLS2oK9LTc','2026-03-02 03:31:29',1,1,1);
 
+INSERT INTO recurso (titulo, contenido, descripcion, url_archivo, fecha_publicacion, id_tipo, id_estado, id_subtema, external_i)
+VALUES ('Dracula','contenido 9','Dracula" by Bram Stoker is a Gothic horror novel published in 1897','https://www.gutenberg.org/cache/epub/345/pg345-images.html',NOW(), 1,1,1,'OL85892W');
+
+
 --
 -- Dumping data for table `usuario_recurso`
 --
@@ -275,3 +279,4 @@ SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed
+
