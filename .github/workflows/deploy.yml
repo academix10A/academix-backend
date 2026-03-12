@@ -46,4 +46,4 @@ jobs:
 
           docker pull ${{ secrets.DOCKER_USERNAME }}/academix-backend:latest
 
-          docker-compose up -d
+          docker-compose up -d --no-deps backend
