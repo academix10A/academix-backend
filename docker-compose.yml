@@ -5,7 +5,7 @@ services:
     container_name: academix-mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: "%40%40321AcAdEmIx123%40%40"
       MYSQL_DATABASE: academix
     ports:
       - "3306:3306"
