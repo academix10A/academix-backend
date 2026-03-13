@@ -25,7 +25,8 @@ app.add_middleware(
         "http://localhost:5173",  # Si usas Vite
         "http://127.0.0.1:5173",
         "http://192.168.152.1:3000",  # Tu dominio en desarrollo
-        #"https://tu-dominio.com"  # Tu dominio en producción
+        "https://academix.homes", # Tu dominio en producción
+        "https://www.academix.homes"
     ],
     allow_credentials=True,
     allow_methods=["*"],  # Permite todos los métodos (GET, POST, etc.)
