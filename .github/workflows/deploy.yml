@@ -1,8 +1,14 @@
 name: Build and Deploy
 
+# on:
+#   push:
+#     branches: [ main ]
+
 on:
-  push:
-    branches: [ main ]
+  workflow_run:
+    workflows: ["Build and Push Docker Image"]
+    types:
+      - completed
 
 jobs:
   build-and-deploy:
