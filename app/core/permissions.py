@@ -30,7 +30,15 @@ class PermissionChecker:
         
         # Extraer rol y membresía del usuario
         user_rol = current_user.rol.nombre.lower() if current_user.rol else None
-        user_membresia = current_user.membresia.nombre.lower() if current_user.membresia else None
+        print(current_user.membresias)
+        for m in current_user.membresias:
+            print(m.__dict__)
+        # user_membresia = current_user.membresias.nombre.lower() if current_user.membresias else None
+        user_membresias = [
+            m.membresia.nombre.lower()
+            for m in current_user.membresias
+            if m.membresia and m.activa
+        ]
         
         # Admin siempre pasa — es el superusuario
         if user_rol == "admin":
@@ -41,7 +49,9 @@ class PermissionChecker:
             return current_user
         
         # Verificar membresía
-        if self.membresias and user_membresia in self.membresias:
+        # if self.membresias and user_membresia in self.membresias:
+        #     return current_user
+        if self.membresias and any(m in self.membresias for m in user_membresias):
             return current_user
         
         # Si no cumple ninguna condición

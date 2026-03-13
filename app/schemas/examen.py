@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional
+from typing import Optional, List
 import re
 from html import escape
 
@@ -148,6 +148,73 @@ class ExamenUpdate(BaseModel):
         
         return v
 
+
+class OpcionPublica(BaseModel):
+    id_opcion: int
+    respuesta: str
+ 
+    class Config:
+        from_attributes = True
+ 
+# ── Schema público de opción con resultado (DESPUÉS de responder) 
+class OpcionResultado(BaseModel):
+    id_opcion: int
+    respuesta: str
+    es_correcta: bool  # ahora sí se revela
+ 
+    class Config:
+        from_attributes = True
+ 
+# ── Pregunta con sus opciones públicas ──
+class PreguntaConOpciones(BaseModel):
+    id_pregunta: int
+    contenido: str
+    opciones: List[OpcionPublica]
+ 
+    class Config:
+        from_attributes = True
+ 
+# ── Examen completo para el frontend ──
+class ExamenCompleto(BaseModel):
+    id_examen: int
+    titulo: str
+    descripcion: str
+    cantidad_preguntas: int
+    id_subtema: int
+    preguntas: List[PreguntaConOpciones]
+ 
+    class Config:
+        from_attributes = True
+ 
+# ── Lo que el frontend envía al terminar el examen ──
+class RespuestaUsuario(BaseModel):
+    id_pregunta: int
+    id_opcion: int
+ 
+class ExamenSubmit(BaseModel):
+    id_examen: int
+    id_usuario: int
+    respuestas: List[RespuestaUsuario]
+ 
+# ── Detalle de una pregunta en el resultado ──
+class PreguntaResultado(BaseModel):
+    id_pregunta: int
+    contenido: str
+    id_opcion_elegida: int
+    respuesta_elegida: str
+    es_correcta: bool
+    opciones: List[OpcionResultado]  # todas las opciones reveladas
+ 
+# ── Resultado completo del examen ──
+class ExamenResultado(BaseModel):
+    id_intento: int
+    id_examen: int
+    titulo_examen: str
+    calificacion: float          # 0.0 a 10.0
+    correctas: int
+    total: int
+    porcentaje: float            # 0 a 100
+    preguntas: List[PreguntaResultado]
 
 class Examen(ExamenBase):
     id_examen: int
