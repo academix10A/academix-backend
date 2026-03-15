@@ -43,11 +43,14 @@ def init_db() -> None:
     # Tablas con dependencias nivel 1
     from app.models.subtema import Subtema
     from app.models.usuario import Usuario
-    from app.models.etiqueta import Etiqueta  # ← ESTE ES IMPORTANTE
+    from app.models.etiqueta import Etiqueta  
     
     # Tablas con dependencias nivel 2
     from app.models.recurso import Recurso
     from app.models.examen import Examen
+    from app.models.membresia import Membresia
+    from app.models.beneficio import Beneficio
+    from app.models.usuario_membresia import UsuarioMembresia
     
     # Tablas con dependencias nivel 3
     from app.models.nota import Nota
@@ -57,6 +60,8 @@ def init_db() -> None:
     
     # Tablas con dependencias nivel 4
     from app.models.opcion import Opcion
+    from app.models.usuario_membresia import UsuarioMembresia
+    from app.models.membresia import Membresia
     
     # Ahora sí crear todas las tablas
     Base.metadata.create_all(bind=engine)

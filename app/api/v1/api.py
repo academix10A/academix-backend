@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import auth, tema, recursos, usuarios, examen, subtema, estado, rol, tipo, etiqueta, publicaciones, nota, pregunta, opcion, intento
+from app.api.v1.endpoints import auth, tema, recursos, usuarios, examen, subtema, estado, rol, tipo, etiqueta, publicaciones, nota, pregunta, opcion, intento, membresia, beneficio, vistas, progreso, home
 
 api_router = APIRouter()
 api_router.include_router(auth.router, tags=["Auth"])
@@ -11,6 +11,8 @@ api_router.include_router(subtema.router, prefix="/subtema", tags=["Subtemas"])
 api_router.include_router(recursos.router, prefix="/recursos", tags=["Recursos"])
 api_router.include_router(estado.router, prefix="/estado", tags=["Estados"])
 api_router.include_router(usuarios.router, prefix="/usuarios", tags=["Usuarios"])
+api_router.include_router(membresia.router, prefix="/membresias", tags=["Membresias"])
+api_router.include_router(beneficio.router, prefix="/beneficios", tags=["Beneficios"])
 api_router.include_router(examen.router, prefix="/examenes", tags=["Examenes"])
 api_router.include_router(pregunta.router, prefix="/pregunta", tags=["Preguntas"])
 api_router.include_router(opcion.router, prefix="/opcion", tags=["Opciones"])
@@ -18,4 +20,6 @@ api_router.include_router(intento.router, prefix="/intento", tags=["Intentos"])
 api_router.include_router(rol.router, prefix="/rol", tags=["Roles"])
 api_router.include_router(tipo.router, prefix="/tipo", tags=["Tipos"])
 api_router.include_router(etiqueta.router, prefix="/etiqueta", tags=["Etiquetas"])
-
+api_router.include_router(vistas.router, prefix="/vistas", tags=["Vistas"])
+api_router.include_router(progreso.router, prefix="/progreso", tags=["Progreso"])
+api_router.include_router(home.router, prefix="/progreso", tags=["Home"])

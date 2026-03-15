@@ -15,12 +15,13 @@ from app.schemas.usuario import (
     UsuarioUpdate,
     UsuarioConRol
 )
+from app.core.permissions import PermissionChecker
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-router = APIRouter()
+router = APIRouter(prefix="/usuarios", tags=["Usuarios"])
 
 request_tracker = {}
 

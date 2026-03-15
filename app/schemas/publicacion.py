@@ -7,8 +7,8 @@ from html import escape
 
 class PublicacionBase(BaseModel):
     titulo: Optional[str] = Field(None, min_length=5, max_length=250)
-    descripcion: Optional[str] = Field(None, min_length=10, max_length=500)
-    texto: Optional[str] = Field(None, min_length=20, max_length=10000)
+    descripcion: Optional[str] = Field(None, min_length=5, max_length=500)
+    texto: Optional[str] = Field(None, min_length=5, max_length=10000)
     id_usuario: Optional[int] = Field(None, gt=0, description="ID del usuario debe ser positivo")
     id_estado: Optional[int] = Field(None, gt=0, description="ID del estado debe ser positivo")
     
@@ -75,7 +75,7 @@ class PublicacionBase(BaseModel):
         v = re.sub(r'\n\s*\n\s*\n+', '\n\n', v)
         
         # Validar longitud después de limpiar
-        if len(v) < 20:
+        if len(v) < 5:
             raise ValueError('El texto debe tener al menos 20 caracteres')
         
         # Bloquear código malicioso y etiquetas peligrosas
@@ -107,8 +107,8 @@ class PublicacionBase(BaseModel):
 
 class PublicacionCreate(BaseModel):
     titulo: str = Field(..., min_length=5, max_length=250, description="Título de la publicación")
-    descripcion: str = Field(..., min_length=10, max_length=500, description="Descripción breve")
-    texto: str = Field(..., min_length=20, max_length=10000, description="Contenido completo de la publicación")
+    descripcion: str = Field(..., min_length=5, max_length=500, description="Descripción breve")
+    texto: str = Field(..., min_length=5, max_length=10000, description="Contenido completo de la publicación")
     id_usuario: int = Field(..., gt=0, description="ID del usuario autor")
     id_estado: int = Field(..., gt=0, description="ID del estado de la publicación")
     
@@ -154,7 +154,7 @@ class PublicacionCreate(BaseModel):
         v = re.sub(r' +', ' ', v)
         v = re.sub(r'\n\s*\n\s*\n+', '\n\n', v)
         
-        if len(v) < 20:
+        if len(v) < 5:
             raise ValueError('El texto debe tener al menos 20 caracteres')
         
         # Bloquear código malicioso
@@ -185,8 +185,8 @@ class PublicacionCreate(BaseModel):
 
 class PublicacionUpdate(BaseModel):
     titulo: Optional[str] = Field(None, min_length=5, max_length=250)
-    descripcion: Optional[str] = Field(None, min_length=10, max_length=500)
-    texto: Optional[str] = Field(None, min_length=20, max_length=10000)
+    descripcion: Optional[str] = Field(None, min_length=5, max_length=500)
+    texto: Optional[str] = Field(None, min_length=5, max_length=10000)
     id_usuario: Optional[int] = Field(None, gt=0)
     id_estado: Optional[int] = Field(None, gt=0)
     
@@ -241,8 +241,8 @@ class PublicacionUpdate(BaseModel):
         v = re.sub(r' +', ' ', v)
         v = re.sub(r'\n\s*\n\s*\n+', '\n\n', v)
         
-        if len(v) < 20:
-            raise ValueError('El texto debe tener al menos 20 caracteres')
+        if len(v) < 5:
+            raise ValueError('El texto debe tener al menos 5 caracteres')
         
         patrones_peligrosos = [
             r'<script', r'</script>', 

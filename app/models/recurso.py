@@ -9,7 +9,8 @@ class Recurso(Base):
     contenido = Column(Text, nullable=True)
     titulo = Column(String(150), nullable=False)
     descripcion = Column(String(250))
-    url_archivo = Column(String(250))
+    url_archivo = Column(String(1000))
+    external_id = Column(String(1000))
     fecha_publicacion = Column(DateTime, default=datetime.utcnow)
     
     # Claves foráneas

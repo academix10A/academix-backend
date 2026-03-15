@@ -5,6 +5,7 @@ from typing import List
 from app.api.deps import get_db
 from app.crud import crud_recursos
 from app.schemas.recurso import Recurso, RecursoCreate, RecursoUpdate
+from app.core.permissions import PermissionChecker
 
 router = APIRouter(prefix="/recurso", tags=["Recursos"])
 
