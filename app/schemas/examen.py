@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional
+from typing import Optional, List
 import re
 from html import escape
 
@@ -148,12 +148,9 @@ class ExamenUpdate(BaseModel):
         
         return v
 
-# Agrega estos schemas al final de app/schemas/examen.py
 
-from pydantic import BaseModel
-from typing import List
 
-# ── Schema público de opción (SIN es_correcta — el usuario no debe verla) ──
+# Schema público de opción (SIN es_correcta — el usuario no debe verla) 
 class OpcionPublica(BaseModel):
     id_opcion: int
     respuesta: str
@@ -161,16 +158,16 @@ class OpcionPublica(BaseModel):
     class Config:
         from_attributes = True
 
-# ── Schema público de opción con resultado (DESPUÉS de responder) ──
+#  Schema público de opción con resultado (DESPUÉS de responder) 
 class OpcionResultado(BaseModel):
     id_opcion: int
     respuesta: str
-    es_correcta: bool  # ahora sí se revela
+    es_correcta: bool  
 
     class Config:
         from_attributes = True
 
-# ── Pregunta con sus opciones públicas ──
+# Pregunta con sus opciones públicas
 class PreguntaConOpciones(BaseModel):
     id_pregunta: int
     contenido: str
@@ -179,7 +176,7 @@ class PreguntaConOpciones(BaseModel):
     class Config:
         from_attributes = True
 
-# ── Examen completo para el frontend ──
+#  Examen completo
 class ExamenCompleto(BaseModel):
     id_examen: int
     titulo: str
@@ -191,7 +188,7 @@ class ExamenCompleto(BaseModel):
     class Config:
         from_attributes = True
 
-# ── Lo que el frontend envía al terminar el examen ──
+# Lo que el frontend envía al terminar el examen 
 class RespuestaUsuario(BaseModel):
     id_pregunta: int
     id_opcion: int
@@ -201,24 +198,24 @@ class ExamenSubmit(BaseModel):
     id_usuario: int
     respuestas: List[RespuestaUsuario]
 
-# ── Detalle de una pregunta en el resultado ──
+#  Detalle de una pregunta en el resultado 
 class PreguntaResultado(BaseModel):
     id_pregunta: int
     contenido: str
     id_opcion_elegida: int
     respuesta_elegida: str
     es_correcta: bool
-    opciones: List[OpcionResultado]  # todas las opciones reveladas
+    opciones: List[OpcionResultado]  
 
-# ── Resultado completo del examen ──
+# Resultado completo del examen
 class ExamenResultado(BaseModel):
     id_intento: int
     id_examen: int
     titulo_examen: str
-    calificacion: float          # 0.0 a 10.0
+    calificacion: float          
     correctas: int
     total: int
-    porcentaje: float            # 0 a 100
+    porcentaje: float           
     preguntas: List[PreguntaResultado]
 
 
