@@ -61,15 +61,6 @@ def create_examen(examen_in: ExamenCreate, db: Session = Depends(get_db)):
     examen = crud_examen.create_examen(db, examen_in=examen_in)
     return examen
 
-# Agrega estos dos endpoints en app/api/v1/endpoints/examen.py
-# Importa al inicio del archivo:
-# from app.schemas.examen import ExamenCompleto, ExamenSubmit, ExamenResultado
-# from app.models.pregunta import Pregunta
-# from app.models.opcion import Opcion
-# from app.models.intento import Intento
-# from app.models.intermedias import respuesta_intento
-# from app.core.security import get_current_user  ← o como lo tengas
-# from datetime import datetime
 
 @router.get("/{examen_id}/completo", response_model=ExamenCompleto, dependencies=[Depends(usuarios_activos)])
 def get_examen_completo(examen_id: int, db: Session = Depends(get_db)):
