@@ -178,10 +178,23 @@ insert into recurso (contenido, titulo, descripcion, url_archivo, fecha_publicac
 '2026-03-02 02:56:56',
 2,3,7);
 
+INSERT INTO recurso (titulo, contenido, descripcion, url_archivo, fecha_publicacion, id_tipo, id_estado, id_subtema, external_id)
+VALUES ('Dracula','contenido 9','Dracula" by Bram Stoker is a Gothic horror novel published in 1897','https://www.gutenberg.org/cache/epub/345/pg345-images.html',NOW(), 1,1,1,'OL85892W');
+
+Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
+VALUES('Musica Alemana', 'Marcha militar alemana Erika','Musica Alemana de la marcha militar llamada Erika ', 'https://youtu.be/AjPHXhDocWQ?si=H4iPLlXbhDJ-SQyt', '', NOW(), 2, 1, 6);
+
+Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
+VALUES('Musica Extranjera', 'Noche Oscura"(Dark is the Night-Тёмная ночь)','Musica extranjera que es de amor pero suena triste y melancolica por el idioma', 'https://youtu.be/Pb9cOAnw6Y4?si=amUglfP6Q92ML8gp', '', NOW(), 2, 1, 7 );
+
 insert into recurso_etiqueta (id_recurso, id_etiqueta) values (1,1);
 insert into recurso_etiqueta (id_recurso, id_etiqueta) values (2,1);
 insert into recurso_etiqueta (id_recurso, id_etiqueta) values (3,1);
 insert into recurso_etiqueta (id_recurso, id_etiqueta) values (4,1);
+
+insert into recurso_etiqueta (id_recurso, id_etiqueta) values (5,1);
+insert into recurso_etiqueta (id_recurso, id_etiqueta) values (6,1);
+insert into recurso_etiqueta (id_recurso, id_etiqueta) values (7,1);
 
 insert into examen (titulo, cantidad_preguntas, descripcion, id_subtema) values 
 ('Evaluación de Fundamentos de Álgebra Lineal',30,'Examen orientado a evaluar conocimientos sobre vectores, matrices y determinantes.',2);
@@ -218,6 +231,8 @@ insert into examen (titulo, cantidad_preguntas, descripcion, id_subtema) values
 
 insert into examen (titulo, cantidad_preguntas, descripcion, id_subtema) values 
 ('Evaluación Complementaria de Cinemática',3,'Ejercicios prácticos de aplicación en física básica.',4);
+
+INSERT INTO examen (titulo, cantidad_preguntas, descripcion, id_subtema) VALUES ('examen de Dracula',12,'es sobre el libro de Dracula por Bram stoker',1);
 
 -- 5. Preguntas y Opciones (Dependen de Examen)
 insert into pregunta (contenido, id_examen) values ('¿Qué es un vector?',1);
@@ -350,3 +365,104 @@ insert into progreso_contenido (id_usuario, id_publicacion, porcentaje_leido, ul
 insert into progreso_contenido (id_usuario, id_publicacion, porcentaje_leido, ultima_posicion, completado) values (2,1,50,900,false);
 insert into progreso_contenido (id_usuario, id_publicacion, porcentaje_leido, ultima_posicion, completado) values (3,2,75,1200,false);
 insert into progreso_contenido (id_usuario, id_publicacion, porcentaje_leido, ultima_posicion, completado) values (4,3,30,500,false);
+
+-- Examen dracula
+-- preguntas de examen de dracula 
+INSERT INTO pregunta (contenido, id_examen) VALUES
+('¿En qué año fue publicada la novela Drácula?', 13),
+('¿Cómo se llama el abogado que visita el castillo de Drácula al inicio?', 13),
+('¿En qué país está ubicado el castillo del Conde Drácula?', 13),
+('¿Cómo se llama la prometida de Jonathan Harker?', 13),
+('¿Quién es el cazador de vampiros que lidera al grupo?', 13),
+('¿Cómo se llama el barco en que viaja Drácula a Inglaterra?', 13),
+('¿Quién es Lucy Westenra en la historia?', 13),
+('¿Qué formato narrativo usa principalmente la novela?', 13),
+('¿Qué le sucede a Renfield en el manicomio?', 13),
+('¿Cómo destruyen finalmente al Conde Drácula?', 13),
+('¿Qué debilita al Conde Drácula según la novela?', 13),
+('¿Qué transformaciones puede hacer el Conde Drácula?', 13);
+
+-- Opciones examen 13
+-- 1. Año de publicación
+INSERT INTO opcion (respuesta, es_correcta, id_pregunta) VALUES
+('1897', 1, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿En qué año fue publicada la novela Drácula?' AND id_examen = 13)),
+('1883', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿En qué año fue publicada la novela Drácula?' AND id_examen = 13)),
+('1905', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿En qué año fue publicada la novela Drácula?' AND id_examen = 13)),
+('1850', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿En qué año fue publicada la novela Drácula?' AND id_examen = 13));
+
+-- 2. El abogado
+INSERT INTO opcion (respuesta, es_correcta, id_pregunta) VALUES
+('Jonathan Harker', 1, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Cómo se llama el abogado que visita el castillo de Drácula al inicio?' AND id_examen = 13)),
+('Van Helsing', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Cómo se llama el abogado que visita el castillo de Drácula al inicio?' AND id_examen = 13)),
+('Renfield', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Cómo se llama el abogado que visita el castillo de Drácula al inicio?' AND id_examen = 13)),
+('Arthur Holmwood', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Cómo se llama el abogado que visita el castillo de Drácula al inicio?' AND id_examen = 13));
+
+-- 3. Ubicación del castillo
+INSERT INTO opcion (respuesta, es_correcta, id_pregunta) VALUES
+('Transilvania, Rumanía', 1, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿En qué país está ubicado el castillo del Conde Drácula?' AND id_examen = 13)),
+('Baviera, Alemania', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿En qué país está ubicado el castillo del Conde Drácula?' AND id_examen = 13)),
+('Londres, Inglaterra', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿En qué país está ubicado el castillo del Conde Drácula?' AND id_examen = 13)),
+('Viena, Austria', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿En qué país está ubicado el castillo del Conde Drácula?' AND id_examen = 13));
+
+-- 4. La prometida
+INSERT INTO opcion (respuesta, es_correcta, id_pregunta) VALUES
+('Mina Murray', 1, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Cómo se llama la prometida de Jonathan Harker?' AND id_examen = 13)),
+('Lucy Westenra', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Cómo se llama la prometida de Jonathan Harker?' AND id_examen = 13)),
+('Elizabeth Báthory', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Cómo se llama la prometida de Jonathan Harker?' AND id_examen = 13)),
+('Mary Shelley', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Cómo se llama la prometida de Jonathan Harker?' AND id_examen = 13));
+
+-- 5. El cazador
+INSERT INTO opcion (respuesta, es_correcta, id_pregunta) VALUES
+('Abraham Van Helsing', 1, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Quién es el cazador de vampiros que lidera al grupo?' AND id_examen = 13)),
+('Arthur Holmwood', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Quién es el cazador de vampiros que lidera al grupo?' AND id_examen = 13)),
+('Dr. John Seward', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Quién es el cazador de vampiros que lidera al grupo?' AND id_examen = 13)),
+('Quincey Morris', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Quién es el cazador de vampiros que lidera al grupo?' AND id_examen = 13));
+
+-- 6. El barco
+INSERT INTO opcion (respuesta, es_correcta, id_pregunta) VALUES
+('El Demeter', 1, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Cómo se llama el barco en que viaja Drácula a Inglaterra?' AND id_examen = 13)),
+('El Nautilus', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Cómo se llama el barco en que viaja Drácula a Inglaterra?' AND id_examen = 13)),
+('El Titanic', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Cómo se llama el barco en que viaja Drácula a Inglaterra?' AND id_examen = 13)),
+('La Perla Negra', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Cómo se llama el barco en que viaja Drácula a Inglaterra?' AND id_examen = 13));
+
+-- 7. Lucy Westenra
+INSERT INTO opcion (respuesta, es_correcta, id_pregunta) VALUES
+('La mejor amiga de Mina', 1, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Quién es Lucy Westenra en la historia?' AND id_examen = 13)),
+('La esposa de Van Helsing', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Quién es Lucy Westenra en la historia?' AND id_examen = 13)),
+('La hermana de Drácula', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Quién es Lucy Westenra en la historia?' AND id_examen = 13)),
+('Una sirvienta del castillo', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Quién es Lucy Westenra en la historia?' AND id_examen = 13));
+
+-- 8. Formato narrativo
+INSERT INTO opcion (respuesta, es_correcta, id_pregunta) VALUES
+('Cartas y diarios', 1, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Qué formato narrativo usa principalmente la novela?' AND id_examen = 13)),
+('Narrador omnisciente', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Qué formato narrativo usa principalmente la novela?' AND id_examen = 13)),
+('Poema épico', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Qué formato narrativo usa principalmente la novela?' AND id_examen = 13)),
+('Guion cinematográfico', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Qué formato narrativo usa principalmente la novela?' AND id_examen = 13));
+
+-- 9. Renfield
+INSERT INTO opcion (respuesta, es_correcta, id_pregunta) VALUES
+('Come insectos y obedece a Drácula', 1, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Qué le sucede a Renfield en el manicomio?' AND id_examen = 13)),
+('Se convierte en vampiro', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Qué le sucede a Renfield en el manicomio?' AND id_examen = 13)),
+('Escapa y huye a Francia', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Qué le sucede a Renfield en el manicomio?' AND id_examen = 13)),
+('Mata a Van Helsing', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Qué le sucede a Renfield en el manicomio?' AND id_examen = 13));
+
+-- 10. Destrucción de Drácula
+INSERT INTO opcion (respuesta, es_correcta, id_pregunta) VALUES
+('Con una estaca en el corazón y cortándole la cabeza', 1, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Cómo destruyen finalmente al Conde Drácula?' AND id_examen = 13)),
+('Exponiéndolo a la luz del sol', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Cómo destruyen finalmente al Conde Drácula?' AND id_examen = 13)),
+('Con agua bendita y rezos', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Cómo destruyen finalmente al Conde Drácula?' AND id_examen = 13)),
+('Quemándolo vivo en su ataúd', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Cómo destruyen finalmente al Conde Drácula?' AND id_examen = 13));
+
+-- 11. Debilidades
+INSERT INTO opcion (respuesta, es_correcta, id_pregunta) VALUES
+('La luz del sol y el ajo', 1, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Qué debilita al Conde Drácula según la novela?' AND id_examen = 13)),
+('La plata y el fuego', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Qué debilita al Conde Drácula según la novela?' AND id_examen = 13)),
+('El oro y las esmeraldas', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Qué debilita al Conde Drácula según la novela?' AND id_examen = 13)),
+('El hierro frío y la sal', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Qué debilita al Conde Drácula según la novela?' AND id_examen = 13));
+
+-- 12. Transformaciones
+INSERT INTO opcion (respuesta, es_correcta, id_pregunta) VALUES
+('En murciélago, lobo y niebla', 1, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Qué transformaciones puede hacer el Conde Drácula?' AND id_examen = 13)),
+('Solo en murciélago', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Qué transformaciones puede hacer el Conde Drácula?' AND id_examen = 13)),
+('En rata, gato y cuervo', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Qué transformaciones puede hacer el Conde Drácula?' AND id_examen = 13)),
+('En pantera y serpiente', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Qué transformaciones puede hacer el Conde Drácula?' AND id_examen = 13));

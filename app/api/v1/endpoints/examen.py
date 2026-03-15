@@ -61,7 +61,6 @@ def create_examen(examen_in: ExamenCreate, db: Session = Depends(get_db)):
     examen = crud_examen.create_examen(db, examen_in=examen_in)
     return examen
 
-
 @router.get("/{examen_id}/completo", response_model=ExamenCompleto, dependencies=[Depends(usuarios_activos)])
 def get_examen_completo(examen_id: int, db: Session = Depends(get_db)):
     """
