@@ -4,12 +4,13 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     """Configuración principal de la aplicación."""
 
-    PROJECT_NAME: str = "core_academix"
-    DATABASE_URL: str = "mysql+pymysql://root:arath07@localhost:3306/academix1"
-    SECRET_KEY: str = "ZeroTwo"
+    PROJECT_NAME: str
+    DATABASE_URL: str
+    SECRET_KEY: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
 
     class Config:
-        env_file = ".env"
+        env_file = ".env.backend"
         env_file_encoding = "utf-8"
 
 
