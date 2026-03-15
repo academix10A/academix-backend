@@ -1,7 +1,7 @@
 """
 Tablas intermedias para relaciones Many-to-Many (M:M)
 """
-from sqlalchemy import Column, Integer, DateTime, Table, ForeignKey
+from sqlalchemy import Column, Integer, DateTime, Table, ForeignKey, Boolean
 from app.db.base_class import Base
 from datetime import datetime
 
@@ -39,3 +39,12 @@ membresias_beneficios = Table(
     Column('id_beneficio', Integer, ForeignKey('beneficio.id_beneficio'), primary_key=True)
 )
 
+# respuesta_intento — guarda qué opción eligió el usuario por pregunta
+respuesta_intento = Table(
+    'respuesta_intento',
+    Base.metadata,
+    Column('id_intento', Integer, ForeignKey('intento.id_intento'), primary_key=True),
+    Column('id_pregunta', Integer, ForeignKey('pregunta.id_pregunta'), primary_key=True),
+    Column('id_opcion', Integer, ForeignKey('opcion.id_opcion'), primary_key=True),
+    Column('es_correcta', Boolean, default=False)
+)
