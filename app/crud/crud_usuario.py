@@ -9,6 +9,8 @@ from app.models.usuario import Usuario
 from app.models.rol import Rol
 from app.models.estado import Estado
 from app.schemas.usuario import UsuarioCreate, UsuarioUpdate
+from app.models.membresia import Membresia
+from app.crud.crud_usuario_membresia import crear_usuario_membresia
 
 def get_usuario(db: Session, usuario_id: int) -> Optional[Usuario]:
     if usuario_id <= 0:
@@ -124,6 +126,17 @@ def create_usuario(db: Session, usuario_in: UsuarioCreate) -> Usuario:
     id_estado = usuario_in.id_estado or 1  # default = 1 (activo)
     _validar_estado_existe(db, id_estado)
     
+    # Buscar membresía gratis por nombre desde la BD
+    membresia_gratis = db.query(Membresia).filter(
+        Membresia.nombre == "Plan Gratuito"
+    ).first()
+    
+    if not membresia_gratis:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="No se encontró la membresía gratuita en el sistema"
+        )
+    
     contrasena_hash = get_password_hash(usuario_in.contrasena)
 
     db_obj = Usuario(
@@ -140,7 +153,15 @@ def create_usuario(db: Session, usuario_in: UsuarioCreate) -> Usuario:
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
+        
+        crear_usuario_membresia(
+            db,
+            id_usuario=db_obj.id_usuario,
+            id_membresia=membresia_gratis.id_membresia
+        )
+        
         return db_obj
+    
     
     except IntegrityError as e:
         db.rollback()
