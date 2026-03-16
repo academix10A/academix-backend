@@ -15,7 +15,6 @@ app = FastAPI(
     title="Academix API",
     description="API para plataforma de biblioteca virtual y hub de estudio colaborativo",
     version="1.0.0",
-    root_path="/api",
 )
 
 # Configuración de CORS
