@@ -1,13 +1,20 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
+
+
+class UsuarioMembresiaCreate(BaseModel):
+    id_usuario: int
+    id_membresia: int
+
 
 class UsuarioMembresia(BaseModel):
     id_usuario_membresia: int
     id_usuario: int
     id_membresia: int
     fecha_inicio: datetime
-    fecha_fin: datetime | None
+    fecha_fin: Optional[datetime]
     activa: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True

@@ -10,8 +10,9 @@ from app.core.security import ALGORITHM
 from app.db.session import SessionLocal
 from app.crud import crud_usuario
 from app.models.usuario import Usuario
+from sqlalchemy.orm import joinedload
 
-reusable_oauth2 = OAuth2PasswordBearer(tokenUrl="/api/auth/login/access-token")
+reusable_oauth2 = OAuth2PasswordBearer(tokenUrl="/api/login/access-token")
 
 
 def get_db() -> Generator:
@@ -23,11 +24,12 @@ def get_db() -> Generator:
         db.close()
 
 
+
+
 def get_current_user(
     db: Session = Depends(get_db), 
     token: str = Depends(reusable_oauth2)
 ) -> Usuario:
-    """Obtiene el usuario actual a partir del token JWT."""
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="No se pudieron validar las credenciales",
@@ -42,7 +44,17 @@ def get_current_user(
     except JWTError:
         raise credentials_exception
     
-    user = crud_usuario.get_usuario(db, usuario_id=int(user_id))
+    # joinedload para traer rol y membresía en la misma query — sin N+1
+    user = (
+        db.query(Usuario)
+        .options(
+            joinedload(Usuario.rol),
+            joinedload(Usuario.membresias)
+        )
+        .filter(Usuario.id_usuario == int(user_id))
+        .first()
+    )
+    
     if user is None:
         raise credentials_exception
     

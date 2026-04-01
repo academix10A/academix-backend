@@ -1,7 +1,4 @@
-"""
-CRUD de Recurso - VERSIÓN FORTIFICADA
-Validaciones robustas para PDFs, Videos y Audiolibros
-"""
+
 from typing import Optional, List
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
@@ -14,10 +11,6 @@ from app.models.subtema import Subtema
 from app.models.etiqueta import Etiqueta
 from app.schemas.recurso import RecursoCreate, RecursoUpdate
 
-
-# ========================================
-# FUNCIONES DE LECTURA (READ)
-# ========================================
 
 def get_recurso(db: Session, recurso_id: int) -> Optional[Recurso]:
     """Obtiene un Recurso por su ID."""
@@ -172,32 +165,35 @@ def _validar_url_unica(
 
 
 def _validar_tipo_archivo_compatible(tipo: Tipo, url_archivo: str) -> None:
-    """
-    Valida que la extensión del archivo sea compatible con el tipo.
-    
-    Tipos esperados:
-    - Tipo 1 (PDF): .pdf
-    - Tipo 2 (Video): .mp4, .avi, .mov, .mkv, .webm
-    - Tipo 3 (Audio): .mp3, .wav, .aac, .ogg, .m4a
-    
-    """
     url_lower = url_archivo.lower()
     tipo_nombre = tipo.nombre.lower()
-    
-    # Definir extensiones válidas por tipo
+
+    # Dominios externos que se aceptan sin validar extensión
+    dominios_externos = [
+        'drive.google.com',
+        'openlibrary.org',
+        'archive.org',
+        'gutenberg.org',
+        'youtube.com',
+        'youtu.be',
+        'vimeo.com',
+        'open.spotify.com',
+        'soundcloud.com',
+    ]
+    es_externo = any(dominio in url_lower for dominio in dominios_externos)
+    if es_externo:
+        return  # Si es servicio conocido, skip validación de extensión
+
     extensiones_validas = {
-        'pdf': ['.pdf'],
-        'video': ['.mp4', '.avi', '.mov', '.mkv', '.webm', '.flv', '.wmv'],
-        'audio': ['.mp3', '.wav', '.aac', '.ogg', '.m4a', '.flac', '.wma']
+        'pdf':        ['.pdf'],
+        'video':      ['.mp4', '.avi', '.mov', '.mkv', '.webm', '.flv', '.wmv'],
+        'audio':      ['.mp3', '.wav', '.aac', '.ogg', '.m4a', '.flac', '.wma'],
+        'audiolibro': ['.mp3', '.wav', '.aac', '.ogg', '.m4a', '.flac', '.wma'],
     }
-    
-    # Verificar si el tipo está en nuestro mapeo
+
     if tipo_nombre in extensiones_validas:
         extensiones = extensiones_validas[tipo_nombre]
-        
-        # Verificar si la URL termina con alguna extensión válida
         tiene_extension_valida = any(url_lower.endswith(ext) for ext in extensiones)
-        
         if not tiene_extension_valida:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -207,30 +203,36 @@ def _validar_tipo_archivo_compatible(tipo: Tipo, url_archivo: str) -> None:
 
 
 def _validar_url_accesible(url_archivo: str) -> None:
-    """
-    Valida que la URL tenga un formato accesible.
-    
-    Verifica:
-    - Que no tenga caracteres raros
-    - Que no sea una URL local (localhost, 127.0.0.1)
-    - Que tenga una extensión de archivo
-    """
     url_lower = url_archivo.lower()
-    
-    # Verificar que tenga extensión de archivo
+
+    # Dominios externos conocidos — no necesitan extensión
+    dominios_externos = [
+        'drive.google.com',
+        'openlibrary.org',
+        'archive.org',
+        'gutenberg.org',
+        'youtube.com',
+        'youtu.be',
+        'vimeo.com',
+        'open.spotify.com',
+        'soundcloud.com',
+    ]
+    es_externo = any(dominio in url_lower for dominio in dominios_externos)
+    if es_externo:
+        return  # Servicio conocido, no validar extensión
+
     extensiones_conocidas = [
         '.pdf', '.mp4', '.avi', '.mov', '.mkv', '.webm',
         '.mp3', '.wav', '.aac', '.ogg', '.m4a'
     ]
-    
     tiene_extension = any(url_lower.endswith(ext) for ext in extensiones_conocidas)
-    
     if not tiene_extension:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="La URL debe terminar con una extensión de archivo válida "
-                "(.pdf, .mp4, .mp3, etc.)"
+            detail="La URL debe terminar con una extensión válida (.pdf, .mp4, .mp3, etc.) "
+                "o ser de un servicio conocido (Drive, YouTube, Open Library, etc.)"
         )
+        
 
 def create_recurso(db: Session, recurso_in: RecursoCreate) -> Recurso:
     """
@@ -263,6 +265,7 @@ def create_recurso(db: Session, recurso_in: RecursoCreate) -> Recurso:
         descripcion=recurso_in.descripcion,
         contenido=recurso_in.contenido,
         url_archivo=recurso_in.url_archivo,
+        external_id=recurso_in.external_id,
         id_tipo=recurso_in.id_tipo,
         id_estado=recurso_in.id_estado,
         id_subtema=recurso_in.id_subtema

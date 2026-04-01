@@ -9,6 +9,8 @@ from app.models.usuario import Usuario
 from app.models.rol import Rol
 from app.models.estado import Estado
 from app.schemas.usuario import UsuarioCreate, UsuarioUpdate
+from app.models.membresia import Membresia
+from app.crud.crud_usuario_membresia import crear_usuario_membresia
 
 def get_usuario(db: Session, usuario_id: int) -> Optional[Usuario]:
     if usuario_id <= 0:
@@ -55,6 +57,7 @@ def get_usuarios(
     
     if id_rol and id_rol > 0:
         query = query.filter(Usuario.id_rol == id_rol)
+        
     
     return query.offset(skip).limit(limit).all()
 
@@ -62,7 +65,7 @@ def get_usuarios(
 def count_usuarios(
     db: Session,
     id_estado: Optional[int] = None,
-    id_rol: Optional[int] = None
+    id_rol: Optional[int] = None 
 ) -> int:
     """
     Cuenta el total de usuarios con filtros opcionales.
@@ -76,6 +79,7 @@ def count_usuarios(
     
     if id_rol and id_rol > 0:
         query = query.filter(Usuario.id_rol == id_rol)
+    
     
     return query.count()
 
@@ -118,10 +122,20 @@ def create_usuario(db: Session, usuario_in: UsuarioCreate) -> Usuario:
     _validar_rol_existe(db, usuario_in.id_rol)
     
     _validar_correo_unico(db, usuario_in.correo)
-    
 
     id_estado = usuario_in.id_estado or 1  # default = 1 (activo)
     _validar_estado_existe(db, id_estado)
+    
+    # Buscar membresía gratis por nombre desde la BD
+    membresia_gratis = db.query(Membresia).filter(
+        Membresia.nombre == "Plan Gratuito"
+    ).first()
+    
+    if not membresia_gratis:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="No se encontró la membresía gratuita en el sistema"
+        )
     
     contrasena_hash = get_password_hash(usuario_in.contrasena)
 
@@ -132,14 +146,22 @@ def create_usuario(db: Session, usuario_in: UsuarioCreate) -> Usuario:
         correo=usuario_in.correo.lower().strip(),  
         contrasena_hash=contrasena_hash,
         id_rol=usuario_in.id_rol,
-        id_estado=usuario_in.id_estado,
+        id_estado=id_estado
     )
     
     try:
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
+        
+        crear_usuario_membresia(
+            db,
+            id_usuario=db_obj.id_usuario,
+            id_membresia=membresia_gratis.id_membresia
+        )
+        
         return db_obj
+    
     
     except IntegrityError as e:
         db.rollback()
@@ -180,7 +202,6 @@ def update_usuario(
     
     if "id_estado" in update_data and update_data["id_estado"]:
         _validar_estado_existe(db, update_data["id_estado"])
-    
     
     if "contrasena" in update_data and update_data["contrasena"]:
         # Hashear nueva contraseña

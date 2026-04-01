@@ -9,11 +9,13 @@ class RecursoBase(BaseModel):
     """Base con campos comunes"""
     titulo: Optional[str] = Field(None, min_length=2, max_length=200)
     descripcion: Optional[str] = Field(None, max_length=500)
-    contenido: Optional[str] = Field(None, max_length=5000)
+    contenido: Optional[str] = Field(None, max_length=200000)
     url_archivo: Optional[str] = Field(None, max_length=1000)
+    external_id: Optional[str] = Field(None,  max_length=5000,description="atributo para api externa")
     id_tipo: Optional[int] = Field(None, gt=0, description="ID del tipo (1=PDF, 2=Video, 3=Audio)")
     id_estado: Optional[int] = Field(None, gt=0, description="ID del estado")
     id_subtema: Optional[int] = Field(None, gt=0, description="ID del subtema")
+    
     
     @field_validator('titulo', 'descripcion', 'contenido')
     @classmethod
@@ -57,10 +59,12 @@ class RecursoCreate(BaseModel):
     descripcion: Optional[str] = Field(None, max_length=500, description="Descripción breve")
     contenido: Optional[str] = Field(None, max_length=5000, description="Contenido del recurso")
     url_archivo: str = Field(..., min_length=10, max_length=1000, description="URL del archivo")
+    external_id: Optional[str] = Field(None,  max_length=5000,description="atributo para api externa")
     id_tipo: int = Field(..., gt=0, description="ID del tipo (1=PDF, 2=Video, 3=Audio)")
     id_estado: int = Field(..., gt=0, description="ID del estado (1=Activo, 2=Inactivo)")
     id_subtema: int = Field(..., gt=0, description="ID del subtema")
     id_etiqueta: Optional[int] = Field(None, gt=0, description="ID de etiqueta opcional")
+    
     
     @field_validator('titulo')
     @classmethod
@@ -112,6 +116,7 @@ class RecursoUpdate(BaseModel):
     descripcion: Optional[str] = Field(None, max_length=500)
     contenido: Optional[str] = Field(None, max_length=5000)
     url_archivo: Optional[str] = Field(None, max_length=1000)
+    external_id: Optional[str] = Field(None, max_length=5000)
     id_tipo: Optional[int] = Field(None, gt=0)
     id_estado: Optional[int] = Field(None, gt=0)
     id_subtema: Optional[int] = Field(None, gt=0)
@@ -178,6 +183,7 @@ class RecursoPublico(BaseModel):
     descripcion: Optional[str] = None
     contenido: Optional[str] = None
     url_archivo: Optional[str] = None
+    external_id: Optional[str]
     fecha_publicacion: datetime
     id_tipo: int
     id_estado: int

@@ -5,8 +5,9 @@ from typing import List
 from app.api.deps import get_db
 from app.crud import crud_subtema
 from app.schemas.subtema import Subtema, SubtemaCreate, SubtemaUpdate
+from app.core.permissions import PermissionChecker
 
-router = APIRouter(prefix="/subtemas", tags=["subtemas"])
+router = APIRouter(prefix="/subtemas", tags=["Subtemas"])
 
 @router.get("/", response_model=List[Subtema])
 def list_subtemas(

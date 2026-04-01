@@ -5,8 +5,12 @@ from typing import List
 from app.api.deps import get_db
 from app.crud import crud_publicacion
 from app.schemas.publicacion import Publicacion, PublicacionCreate, PublicacionUpdate
+from app.core.permissions import PermissionChecker
 
-router = APIRouter(prefix="/publicacion", tags=["publicaciones"])
+router = APIRouter(prefix="/publicacion", tags=["Publicaciones"])
+
+solo_admin = PermissionChecker(roles=["admin"])
+usuarios_activos = PermissionChecker(membresias=["premium", "gratis"])
 
 @router.get("/", response_model=List[Publicacion])
 def list_publicacion(

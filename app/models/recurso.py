@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.db.base_class import Base
@@ -6,10 +6,11 @@ from app.models.intermedias import usuario_recurso, recurso_etiqueta
 
 class Recurso(Base):  
     id_recurso = Column(Integer, primary_key=True, index=True)
-    contenido = Column(String(250))
+    contenido = Column(Text, nullable=True)
     titulo = Column(String(150), nullable=False)
     descripcion = Column(String(250))
-    url_archivo = Column(String(250))
+    url_archivo = Column(String(1000))
+    external_id = Column(String(1000))
     fecha_publicacion = Column(DateTime, default=datetime.utcnow)
     
     # Claves foráneas
