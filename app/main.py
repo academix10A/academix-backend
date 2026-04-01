@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware  # ← AGREGAR ESTO
 # from sqladmin import Admin
 # from app.admin.views import UserAdmin
 from app.db.session import init_db
-from app.api.v1.api import tema, usuarios, auth, recursos,examen, subtema, estado, rol, tipo, etiqueta, publicaciones, nota, pregunta, opcion, intento
+from app.api.v1.api import tema, usuarios, auth, recursos,examen, subtema, estado, rol, tipo, etiqueta, publicaciones, nota, pregunta, opcion, intento, usuario_membresia
 import logging
 
 
@@ -49,6 +49,7 @@ app.include_router(intento.router, prefix="/api")
 app.include_router(estado.router, prefix="/api")
 app.include_router(tipo.router, prefix="/api")
 app.include_router(etiqueta.router, prefix="/api")
+app.include_router(usuario_membresia.router, prefix="/api")
 
 
 @app.get("/")
