@@ -13,7 +13,7 @@ class UsuarioMembresia(BaseModel):
     id_usuario: int
     id_membresia: int
     fecha_inicio: datetime
-    fecha_fin: datetime
+    fecha_fin: Optional[datetime]
     activa: bool
 
     class Config:

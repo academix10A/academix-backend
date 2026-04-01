@@ -1,12 +1,10 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware  # ← AGREGAR ESTO
+from fastapi.middleware.cors import CORSMiddleware
 # from sqladmin import Admin
 # from app.admin.views import UserAdmin
 from app.db.session import init_db
-from app.api.v1.api import tema, usuarios, auth, recursos,examen, subtema, estado, rol, tipo, etiqueta, publicaciones, nota, pregunta, opcion, intento, membresia, beneficio, vistas, progreso, home
+from app.api.v1.api import tema, usuarios, auth, recursos, examen, subtema, estado, rol, tipo, etiqueta, publicaciones, nota, pregunta, opcion, intento, membresia, beneficio, vistas, progreso, home, usuario_membresia
 import logging
-from fastapi.middleware.cors import CORSMiddleware
-
 
 # Inicializar base de datos (crear tablas)
 init_db()
@@ -21,34 +19,17 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",  # React en desarrollo
-        "http://localhost:5173",  # Si usas Vite
+        "http://localhost:3000",
+        "http://localhost:5173",
         "http://127.0.0.1:5173",
-        "http://192.168.152.1:3000",  # Tu dominio en desarrollo
-        "https://academix.homes", # Tu dominio en producción
+        "http://192.168.152.1:3000",
+        "https://academix.homes",
         "https://www.academix.homes"
     ],
     allow_credentials=True,
-    allow_methods=["*"],  # Permite todos los métodos (GET, POST, etc.)
-    allow_headers=["*"],  # Permite todos los headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
-
-# # ← AGREGAR ESTO (DESPUÉS DE CREAR app)
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=[
-#         "http://localhost:5173",
-#         "http://127.0.0.1:5173",
-#     ],
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
-
-# Configuración de Admin (descomentar cuando esté listo):
-# from app.db.session import engine
-# admin = Admin(app, engine)
-# admin.add_view(UserAdmin)
 
 # Incluir routers
 app.include_router(auth.router, prefix="/api")
@@ -68,6 +49,7 @@ app.include_router(intento.router, prefix="/api")
 app.include_router(estado.router, prefix="/api")
 app.include_router(tipo.router, prefix="/api")
 app.include_router(etiqueta.router, prefix="/api")
+app.include_router(usuario_membresia.router, prefix="/api")  # 👈 TU ENDPOINT
 app.include_router(vistas.router, prefix="/api")
 app.include_router(progreso.router, prefix="/api")
 app.include_router(home.router, prefix="/api")
@@ -80,7 +62,7 @@ def root():
         "author": "Arath",
         "version": "1.0.0"
     }
-    
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',

@@ -1,8 +1,9 @@
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import auth, tema, recursos, usuarios, examen, subtema, estado, rol, tipo, etiqueta, publicaciones, nota, pregunta, opcion, intento, membresia, beneficio, vistas, progreso, home
+from app.api.v1.endpoints import auth, tema, recursos, usuarios, examen, subtema, estado, rol, tipo, etiqueta, publicaciones, nota, pregunta, opcion, intento, membresia, beneficio, vistas, progreso, home, usuario_membresia
 
 api_router = APIRouter()
+
 api_router.include_router(auth.router, tags=["Auth"])
 api_router.include_router(publicaciones.router, prefix="/publicacion", tags=["Publicaciones"])
 api_router.include_router(tema.router, prefix="/tema", tags=["Tema"])
@@ -20,6 +21,7 @@ api_router.include_router(intento.router, prefix="/intento", tags=["Intentos"])
 api_router.include_router(rol.router, prefix="/rol", tags=["Roles"])
 api_router.include_router(tipo.router, prefix="/tipo", tags=["Tipos"])
 api_router.include_router(etiqueta.router, prefix="/etiqueta", tags=["Etiquetas"])
+api_router.include_router(usuario_membresia.router, prefix="/usuario_membresia", tags=["Usuario Membresia"])  # 👈 TUYO
 api_router.include_router(vistas.router, prefix="/vistas", tags=["Vistas"])
 api_router.include_router(progreso.router, prefix="/progreso", tags=["Progreso"])
-api_router.include_router(home.router, prefix="/progreso", tags=["Home"])
+api_router.include_router(home.router, prefix="/home", tags=["Home"])  # 🔥 CORREGIDO
