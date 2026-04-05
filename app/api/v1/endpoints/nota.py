@@ -5,15 +5,16 @@ from typing import List
 
 from app.api.deps import get_db, get_current_active_user
 from app.crud import crud_nota
-from app.schemas.nota import Nota, NotaCreate, NotaUpdate
+from app.schemas.nota import Nota, NotaCreate, NotaUpdate, NotasPorRecursoResponse, NotaCompartidaResponse
 from app.models.usuario import Usuario
-from app.core.permissions import PermissionChecker
+from app.core.permissions import PermissionChecker, Beneficios
 
 router = APIRouter(prefix="/notas", tags=["Notas"])
 
+puede_notas = PermissionChecker(beneficios=[Beneficios.NOTAS])
+puede_notas_compartidas = PermissionChecker(beneficios=[Beneficios.NOTAS_COMPARTIDAS])
 
-
-@router.get("/usuario")
+@router.get("/usuario", dependencies=[Depends(puede_notas)])
 def obtener_notas_usuario(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
@@ -21,11 +22,11 @@ def obtener_notas_usuario(
     current_user: Usuario = Depends(get_current_active_user)
 ):
     """Obtiene todas las notas del usuario actual (privadas + compartidas)."""
-    notas = crud_nota.get_notas_usuario(db, id_usuario=current_user.id_usuario, skip=skip, limit=limit)
+    notas = crud_nota.get_notas_by_usuario(db, id_usuario=current_user.id_usuario, skip=skip, limit=limit)
     return notas
 
 
-@router.get("/usuario/privadas")
+@router.get("/usuario/privadas", dependencies=[Depends(puede_notas)])
 def obtener_notas_privadas_usuario(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
@@ -36,8 +37,18 @@ def obtener_notas_privadas_usuario(
     notas = crud_nota.get_notas_privadas_usuario(db, id_usuario=current_user.id_usuario, skip=skip, limit=limit)
     return notas
 
+@router.get("/count", dependencies=[Depends(puede_notas)])
+def count_notas_usuario(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_active_user)
+):
+    """Obtiene conteo de las notas del usuario."""
+    notas = crud_nota.count_notas_por_usuario(db, id_usuario=current_user.id_usuario)
+    return notas
 
-@router.get("/usuario/compartidas")
+@router.get("/usuario/compartidas", dependencies=[Depends(puede_notas_compartidas)])
 def obtener_notas_compartidas_usuario(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
@@ -49,9 +60,7 @@ def obtener_notas_compartidas_usuario(
     return notas
 
 
-# ── GET /notas/  ──────────────────────────────────────────────────────────────
-# Solo devuelve las notas del usuario autenticado, no las de todos
-@router.get("/", response_model=List[Nota])
+@router.get("/", response_model=List[Nota], dependencies=[Depends(puede_notas)])
 def list_notas(
     skip:  int = 0,
     limit: int = 100,
@@ -65,9 +74,7 @@ def list_notas(
     return notas
 
 
-# ── GET /notas/{nota_id}  ─────────────────────────────────────────────────────
-# Solo permite ver una nota si pertenece al usuario o es compartida
-@router.get("/{nota_id}", response_model=Nota)
+@router.get("/{nota_id}", response_model=Nota, dependencies=[Depends(puede_notas)])
 def read_nota(
     nota_id: int,
     db:      Session = Depends(get_db),
@@ -78,7 +85,6 @@ def read_nota(
     if not nota:
         raise HTTPException(status_code=404, detail="Nota no encontrada")
 
-    # Verificar acceso: dueño de la nota O nota compartida
     if nota.id_usuario != current_user.id_usuario and not nota.es_compartida:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -86,45 +92,51 @@ def read_nota(
         )
     return nota
 
+@router.get("/recurso/{id_recurso}/compartidas", response_model=NotasPorRecursoResponse, dependencies=[Depends(puede_notas_compartidas)])
+def obtener_notas_compartidas_por_recurso(
+    id_recurso: int,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_active_user),
+):
+    """Obtiene todas las notas compartidas de un recurso específico."""
+    notas = crud_nota.get_notas_compartidas_by_recurso(db, id_recurso=id_recurso)
+    return {
+        "id_recurso": id_recurso,
+        "notas": notas
+    }
 
-# ── POST /notas/  ─────────────────────────────────────────────────────────────
-@router.post("/", response_model=Nota, status_code=201)
+@router.post("/", response_model=Nota, status_code=201, dependencies=[Depends(puede_notas)])
 def create_nota(
     nota_in: NotaCreate,
-    db:      Session = Depends(get_db),
+    db: Session = Depends(get_db),
     current_user: Usuario = Depends(get_current_active_user),
 ):
     """
     Crea una nota nueva.
     - El id_usuario SIEMPRE se toma del token JWT, nunca del body.
-      Esto evita que un usuario cree notas en nombre de otro.
-    - Valida duplicado solo dentro de las notas del mismo usuario.
     """
-
-    # Seguridad: ignorar el id_usuario que venga del body y usar el del token
-    nota_in.id_usuario = current_user.id_usuario
-
-    # Validar duplicado solo por usuario (no globalmente)
     nota_exists = crud_nota.get_nota_by_contenido_y_usuario(
         db,
         contenido=nota_in.contenido,
         id_usuario=current_user.id_usuario,
     )
+    print("AQUI 3")
     if nota_exists:
         raise HTTPException(
             status_code=400,
             detail="Ya tienes una nota con ese mismo contenido",
         )
-    
-    # # Crear la nota usando el id_usuario del token
-    # nota = crud_nota.create_nota(db, nota_in=nota_in, id_usuario=current_user.id_usuario)
 
-    nota = crud_nota.create_nota(db, nota_in=nota_in)
+    nota = crud_nota.create_nota(
+        db,
+        nota_in=nota_in,
+        id_usuario=current_user.id_usuario
+    )
+    print(nota)
     return nota
 
 
-# ── PUT /notas/{nota_id}  ─────────────────────────────────────────────────────
-@router.put("/{nota_id}", response_model=Nota)
+@router.put("/{nota_id}", response_model=Nota, dependencies=[Depends(puede_notas)])
 def update_nota(
     nota_id: int,
     nota_in: NotaUpdate,
@@ -146,8 +158,7 @@ def update_nota(
     return nota
 
 
-# ── DELETE /notas/{nota_id}  ──────────────────────────────────────────────────
-@router.delete("/{nota_id}", response_model=Nota)
+@router.delete("/{nota_id}", response_model=Nota, dependencies=[Depends(puede_notas)])
 def delete_nota(
     nota_id: int,
     db:      Session = Depends(get_db),
@@ -168,9 +179,7 @@ def delete_nota(
     return nota
 
 
-# ── GET /notas/compartidas/  ─────────────────────────────────────────────────
-# Endpoint público de notas compartidas (comunidad)
-@router.get("/compartidas/", response_model=List[Nota])
+@router.get("/compartidas/", response_model=List[Nota], dependencies=[Depends(puede_notas_compartidas)])
 def list_notas_compartidas(
     skip:  int = 0,
     limit: int = 100,

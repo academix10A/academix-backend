@@ -1,6 +1,6 @@
 # app/crud/crud_nota.py
 from typing import Optional, List
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.models.nota import Nota
 from app.schemas.nota import NotaCreate, NotaUpdate
 
@@ -24,6 +24,7 @@ def get_notas_by_usuario(
     """Obtiene solo las notas que pertenecen a un usuario específico."""
     return (
         db.query(Nota)
+        .options(joinedload(Nota.recurso))
         .filter(Nota.id_usuario == id_usuario)
         .order_by(Nota.fecha_creacion.desc())
         .offset(skip)
@@ -31,6 +32,13 @@ def get_notas_by_usuario(
         .all()
     )
 
+def count_notas_por_usuario(
+    db: Session,
+    id_usuario: int
+) -> dict:
+    """Cuenta cuántas notas tiene un usuario."""
+    data = db.query(Nota).filter(Nota.id_usuario == id_usuario).count()
+    return {"count": data}
 
 def get_notas_compartidas(
     db: Session, skip: int = 0, limit: int = 100
@@ -67,13 +75,27 @@ def get_nota_by_contenido_y_usuario(
         .first()
     )
 
+def get_notas_compartidas_by_recurso(
+    db: Session,
+    id_recurso: int
+) -> List[Nota]:
+    """Obtiene todas las notas compartidas de un recurso específico."""
+    return (
+        db.query(Nota)
+        .filter(
+            Nota.id_recurso == id_recurso,
+            Nota.es_compartida == True
+        )
+        .order_by(Nota.fecha_creacion.desc())
+        .all()
+    )
 
-def create_nota(db: Session, nota_in: NotaCreate) -> Nota:
-    """Crea una nota nueva."""
+def create_nota(db: Session, nota_in: NotaCreate, id_usuario: int) -> Nota:
     db_obj = Nota(
+        titulo=nota_in.titulo,
         contenido=nota_in.contenido,
         es_compartida=nota_in.es_compartida,
-        id_usuario=nota_in.id_usuario,
+        id_usuario=id_usuario,
         id_recurso=nota_in.id_recurso,
     )
     db.add(db_obj)

@@ -1,6 +1,6 @@
 # app/schemas/nota.py
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 import re
 from html import escape
@@ -34,16 +34,41 @@ def _sanitizar(v: str) -> str:
 # ── Schemas ───────────────────────────────────────────────────────────────────
 
 class NotaBase(BaseModel):
+    titulo: Optional[str] = Field(None, min_length=1, max_length=25)
     contenido:    Optional[str]  = Field(None, min_length=1, max_length=5000)
     es_compartida: Optional[bool] = None
     id_usuario:   Optional[int]  = Field(None, gt=0)
     id_recurso:   Optional[int]  = Field(None, gt=0)
+    
+    @field_validator('titulo')
+    @classmethod
+    def sanitizar_titulo(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        v = v.strip()
+        if len(v) < 1:
+            raise ValueError("El título no puede estar vacío")
+        return escape(v)
 
     @field_validator('contenido')
     @classmethod
     def sanitizar_contenido(cls, v: Optional[str]) -> Optional[str]:
         return _sanitizar(v) if v is not None else v
 
+class NotaCompartidaResponse(BaseModel):
+    id_nota: int
+    titulo: str
+    contenido: str
+    id_usuario: int
+    fecha_creacion: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class NotasPorRecursoResponse(BaseModel):
+    id_recurso: int
+    notas: List[NotaCompartidaResponse]
 
 class NotaCreate(BaseModel):
     """
@@ -51,10 +76,20 @@ class NotaCreate(BaseModel):
     Nota: id_usuario se acepta en el body pero el endpoint lo sobreescribe
     con el id del token JWT — nunca se usa el valor que manda el cliente.
     """
+    titulo: str = Field(..., min_length=1, max_length=25)
     contenido:     str  = Field(..., min_length=1, max_length=5000)
     es_compartida: bool = Field(..., description="Si la nota es visible para otros usuarios")
-    id_usuario:    int  = Field(..., gt=0)
     id_recurso:    int  = Field(..., gt=0)
+    
+    @field_validator('titulo')
+    @classmethod
+    def sanitizar_titulo(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        v = v.strip()
+        if len(v) < 1:
+            raise ValueError("El título no puede estar vacío")
+        return escape(v)
 
     @field_validator('contenido')
     @classmethod
@@ -64,10 +99,20 @@ class NotaCreate(BaseModel):
 
 class NotaUpdate(BaseModel):
     """Solo contenido y es_compartida son editables por el usuario."""
+    titulo: Optional[str] = Field(None, min_length=1, max_length=25)
     contenido:     Optional[str]  = Field(None, min_length=1, max_length=5000)
     es_compartida: Optional[bool] = None
     # id_usuario e id_recurso NO están aquí a propósito —
     # no se permite cambiar a quién pertenece una nota ni su recurso.
+    @field_validator('titulo')
+    @classmethod
+    def sanitizar_titulo(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        v = v.strip()
+        if len(v) < 1:
+            raise ValueError("El título no puede estar vacío")
+        return escape(v)
 
     @field_validator('contenido')
     @classmethod

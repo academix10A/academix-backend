@@ -30,106 +30,160 @@ insert into tema (nombre, descripcion, nivel_dificultad) values ('Química Gener
 insert into tema (nombre, descripcion, nivel_dificultad) values ('Ética Profesional','Principios éticos en el ejercicio profesional','básico');
 insert into tema (nombre, descripcion, nivel_dificultad) values ('Ciencias Políticas','Conceptos fundamentales del sistema político','intermedio');
 
-insert into subtema (nombre, descripcion, nivel_dificultad) values ('Vectores y Matrices','Operaciones con vectores y matrices','alto');
-insert into subtema (nombre, descripcion, nivel_dificultad) values ('Derivadas Básicas','Conceptos fundamentales de derivación','alto');
-insert into subtema (nombre, descripcion, nivel_dificultad) values ('Biología Celular','Estructura y función celular','alta');
-insert into subtema (nombre, descripcion, nivel_dificultad) values ('Cinemática','Estudio del movimiento rectilíneo','alta');
-insert into subtema (nombre, descripcion, nivel_dificultad) values ('Álgebra Lineal','Sistemas de ecuaciones y espacios vectoriales','alta');
-insert into subtema (nombre, descripcion, nivel_dificultad) values ('Política Contemporánea','Análisis de sistemas políticos actuales','alta');
-insert into subtema (nombre, descripcion, nivel_dificultad) values ('Ética y Sociedad','Relación entre ética y entorno social','alta');
+insert into subtema (nombre, descripcion, nivel_dificultad) values ('Vectores y Matrices','Operaciones con vectores y matrices','intermedio');
+insert into subtema (nombre, descripcion, nivel_dificultad) values ('Derivadas Básicas','Conceptos fundamentales de derivación','intermedio');
+insert into subtema (nombre, descripcion, nivel_dificultad) values ('Biología Celular','Estructura y función celular','intermedio');
+insert into subtema (nombre, descripcion, nivel_dificultad) values ('Cinemática','Estudio del movimiento rectilíneo','avanzado');
+insert into subtema (nombre, descripcion, nivel_dificultad) values ('Álgebra Lineal','Sistemas de ecuaciones y espacios vectoriales','avanzado');
+insert into subtema (nombre, descripcion, nivel_dificultad) values ('Política Contemporánea','Análisis de sistemas políticos actuales','basico');
+insert into subtema (nombre, descripcion, nivel_dificultad) values ('Ética y Sociedad','Relación entre ética y entorno social','intermedio');
 
 -- 2. Membresías y beneficios
-insert into beneficio (nombre, descripcion) values ('Acceso a Biblioteca Virtual','Permite visualizar los recursos educativos organizados por temas y subtemas dentro de la plataforma.');
-insert into beneficio (nombre, descripcion) values ('Busqueda y Filtros Avanzados','Permite buscar recursos por texto, etiquetas, dificultad y tema.');
-insert into beneficio (nombre, descripcion) values ('Gestion de Notas Personales','Permite crear, editar y eliminar notas personales asociadas o no a recursos.');
-insert into beneficio (nombre, descripcion) values ('Publicacion de Notas Compartidas','Permite publicar notas en formato textual para que otros usuarios las consulten.');
-insert into beneficio (nombre, descripcion) values ('Examenes por Tema','Permite realizar examenes practicos asociados a temas especificos con calificacion automatica.');
-insert into beneficio (nombre, descripcion) values ('Descarga para Uso Offline','Permite descargar recursos para acceso sin conexion segun el rol del usuario.');
-insert into beneficio (nombre, descripcion) values ('Acceso a Funcionamiento Offline','Permite acceder a recursos y notas almacenadas localmente sin conexion a internet.');
-insert into beneficio (nombre, descripcion) values ('Asistencia Inteligente Contextual','Permite enviar texto seleccionado para recibir explicaciones generadas por IA.');
-insert into beneficio (nombre, descripcion) values ('Historial de Consultas IA','Permite visualizar el historial de preguntas realizadas mediante asistencia inteligente.');
-insert into beneficio (nombre, descripcion) values ('Acceso Premium Completo','Habilita todas las funcionalidades avanzadas incluyendo asistencia inteligente y descargas extendidas.');
+insert into beneficio (nombre, descripcion) values
+('Acceso a Biblioteca','Permite acceder a los recursos educativos disponibles.'),
+('Busqueda de Recursos','Permite buscar y filtrar recursos por diferentes criterios.'),
+('Gestion de Notas','Permite crear, editar y eliminar notas personales.'),
+('Notas Compartidas','Permite publicar notas visibles para otros usuarios.');
+
+-- acceso
+insert into beneficio (nombre, descripcion) values
+('Acceso a Examenes Basicos','Permite realizar examenes de nivel basico.');
+
+insert into beneficio (nombre, descripcion) values
+('Acceso a Examenes Avanzados','Permite realizar examenes de nivel avanzado.');
+
+-- intentos
+insert into beneficio (nombre, descripcion) values
+('Intentos Limitados (2 por examen)','Limita a solo dos intentos por examen.');
+
+insert into beneficio (nombre, descripcion) values
+('Intentos Ilimitados','Permite repetir examenes sin limite.');
+
+-- resultados
+insert into beneficio (nombre, descripcion) values
+('Ver Solo Calificacion','Muestra solo la calificacion final.');
+
+insert into beneficio (nombre, descripcion) values
+('Ver Desglose Completo','Muestra respuestas correctas e incorrectas');
+
+-- historial
+insert into beneficio (nombre, descripcion) values
+('Historial de Intentos','Permite ver intentos anteriores de examenes.');
+
+insert into beneficio (nombre, descripcion) values
+('Descarga Offline','Permite descargar recursos para uso sin internet.'),
+('Modo Offline','Permite acceder a contenido sin conexion.'),
+('Asistente IA','Permite obtener explicaciones con inteligencia artificial.'),
+('Historial IA','Permite ver consultas anteriores con IA.');
 
 insert into membresia (nombre, descripcion, costo, tipo, duracion_dias) values
 ('Plan Gratuito',
-'Permite acceso basico a la biblioteca virtual, gestion de notas y examenes por tema.',
+'Acceso basico a recursos, notas y examenes con limitaciones.',
 0,
 'Freemium',
 36500); -- 100 años prácticamente ilimitado
 
 insert into membresia (nombre, descripcion, costo, tipo, duracion_dias) values
 ('Plan Premium Mensual',
-'Incluye asistencia inteligente contextual, historial de consultas IA y descargas extendidas.',
+'Acceso completo sin restricciones incluyendo examenes avanzados, IA y contenido offline.',
 99,
 'Mensual',
 30);
 
 insert into membresia (nombre, descripcion, costo, tipo, duracion_dias) values
 ('Plan Premium Semestral',
-'Incluye todas las funcionalidades premium con acceso extendido por seis meses.',
+'Acceso completo sin restricciones incluyendo examenes avanzados, IA y contenido offline.',
 499,
 'Semestral',
 180);
 
 insert into membresia (nombre, descripcion, costo, tipo, duracion_dias) values
 ('Plan Premium Anual',
-'Acceso completo anual a todas las funciones premium del sistema Academix.',
+'Acceso completo sin restricciones incluyendo examenes avanzados, IA y contenido offline.',
 899,
 'Anual',
 365);
 
-insert into membresias_beneficios (id_membresia, id_beneficio) values (1,1);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (1,2);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (1,3);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (1,4);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (1,5);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (1,7);
+insert into membresias_beneficios values (1,1); -- biblioteca
+insert into membresias_beneficios values (1,2); -- busqueda
+insert into membresias_beneficios values (1,3); -- notas
+insert into membresias_beneficios values (1,4); -- notas compartidas
 
-insert into membresias_beneficios (id_membresia, id_beneficio) values (2,1);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (2,2);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (2,3);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (2,4);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (2,5);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (2,6);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (2,7);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (2,8);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (2,9);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (2,10);
+-- examenes
+insert into membresias_beneficios values (1,5); -- basicos
+insert into membresias_beneficios values (1,7); -- 1 intento
+insert into membresias_beneficios values (1,9); -- solo calificacion
+insert into membresias_beneficios values (1,11);
 
-insert into membresias_beneficios (id_membresia, id_beneficio) values (3,1);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (3,2);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (3,3);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (3,4);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (3,5);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (3,6);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (3,7);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (3,8);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (3,9);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (3,10);
+-- base
+insert into membresias_beneficios values (2,1);
+insert into membresias_beneficios values (2,2);
+insert into membresias_beneficios values (2,3);
+insert into membresias_beneficios values (2,4);
 
-insert into membresias_beneficios (id_membresia, id_beneficio) values (4,1);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (4,2);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (4,3);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (4,4);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (4,5);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (4,6);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (4,7);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (4,8);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (4,9);
-insert into membresias_beneficios (id_membresia, id_beneficio) values (4,10);
+-- examenes completos
+insert into membresias_beneficios values (2,5); -- basicos
+insert into membresias_beneficios values (2,6); -- avanzados
+insert into membresias_beneficios values (2,8); -- ilimitados
+insert into membresias_beneficios values (2,10); -- desglose
+insert into membresias_beneficios values (2,11); -- historial
+
+-- extras
+insert into membresias_beneficios values (2,12); -- descarga
+insert into membresias_beneficios values (2,13); -- offline
+insert into membresias_beneficios values (2,14); -- IA
+insert into membresias_beneficios values (2,15); -- historial IA
+
+-- base
+insert into membresias_beneficios values (3,1);
+insert into membresias_beneficios values (3,2);
+insert into membresias_beneficios values (3,3);
+insert into membresias_beneficios values (3,4);
+
+-- examenes completos
+insert into membresias_beneficios values (3,5); -- basicos
+insert into membresias_beneficios values (3,6); -- avanzados
+insert into membresias_beneficios values (3,8); -- ilimitados
+insert into membresias_beneficios values (3,10); -- desglose
+insert into membresias_beneficios values (3,11); -- historial
+
+-- extras
+insert into membresias_beneficios values (3,12); -- descarga
+insert into membresias_beneficios values (3,13); -- offline
+insert into membresias_beneficios values (3,14); -- IA
+insert into membresias_beneficios values (3,15); -- historial IA
+
+-- base
+insert into membresias_beneficios values (4,1);
+insert into membresias_beneficios values (4,2);
+insert into membresias_beneficios values (4,3);
+insert into membresias_beneficios values (4,4);
+
+-- examenes completos
+insert into membresias_beneficios values (4,5); -- basicos
+insert into membresias_beneficios values (4,6); -- avanzados
+insert into membresias_beneficios values (4,8); -- ilimitados
+insert into membresias_beneficios values (4,10); -- desglose
+insert into membresias_beneficios values (4,11); -- historial
+
+-- extras
+insert into membresias_beneficios values (4,12); -- descarga
+insert into membresias_beneficios values (4,13); -- offline
+insert into membresias_beneficios values (4,14); -- IA
+insert into membresias_beneficios values (4,15); -- historial IA
 
 -- 3. Usuarios (Actualizados con tu nuevo listado, dependen de Rol y Estado)
 insert into usuario (nombre, apellido_paterno, apellido_materno, correo, contrasena_hash, fecha_registro, id_rol, id_estado) values
 ('Jafet Jeshua', 'Gamboa', 'Lopez', 'jafetgamboa6@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$JcTYO0cIwXjvvXdOCWFsDQ$mbWDvrb9lfpEcdvmuxvq7t7uaJapT7FG+lUoLt5/bbw', '2026-02-10 03:15:31', 1, 1),
-('Carlos', 'Hernandez', 'Lopez', 'carlos.hernandez@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$OwcgRMhZS2nNmXMOodT6vw$4vMC7XRxu9vaKz8LJkpTHF8JDFlh3pU+Ry54xxVWMlU', '2026-02-10 20:49:14', 1, 1),
-('Maria', 'De La Concepcion', 'Gonzalez', 'maria.gonzalez@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$XkvJWUupdc5ZK4UQYiwF4A$Sgchaco20PQSTt2Y91udW9VyQyv4WOGu88xaQ2YKKbU', '2026-02-11 01:59:14', 1, 1),
-('Luis', 'Ramirez', 'Torres', 'luis.ramirez@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$NUYoRQghxDjHuNea0/p/Lw$S6xe40JQu/ocQQYjXez7tgEPqUjvJow2LoLg0WCbYPo', '2026-02-11 01:59:54', 1, 1),
-('Jose', 'Perez', 'Castillo', 'jose.perez@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$uTfGmLO29h7DuJcyJgSgdA$ZBBGwkkkOxi1T1ZsvMmOYJuEZB6uXBheGhFJx5aPsuU', '2026-02-11 02:00:40', 1, 1),
-('Fernanda', 'Sanchez', 'Morales', 'fernanda.sanchez@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$G2MMIWSMEULIWYsxBmAMoQ$n8sEu97wxckt3+P95Ffh3FIkoQ5FzlIYCYPjno7HCZw', '2026-02-11 02:01:44', 1, 1),
-('Diego', 'Navarro', 'Ortiz', 'diego.navarro@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$Ruh9z7n3HqP0HgMgROhdyw$nmrd3X5nlieJEbJS4Rj2QuZgoONHfAD8LOX4Gx42b3k', '2026-02-11 02:03:52', 1, 1),
-('Laura', 'Cruz', 'Mendoza', 'laura.cruz@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$VEopJURIac25l1JKiZHSeg$e2uzMjEcE5RffJH8CUCsB6fyHvu4+Vu9mU3e3RMiYp8', '2026-02-11 02:04:45', 1, 1),
-('Miguel', 'Rojas', 'Vazquez', 'miguel.rojas@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$hJASAkBIyXmPsTaG8L73vg$snfehwurCenc+DiOiKEcaamI0Rxppfj+hmS5VbesYBs', '2026-02-11 02:05:20', 1, 1),
-('Daniela', 'Jimenez', 'Herrera', 'daniela.jimenez@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$FKI0JmRMybl3zjkHgBAihA$CbkbJ2ZI++rvPLSR7XEonun+cAmxNNOrDwNp5NRTmTk', '2026-02-11 02:05:56', 1, 1);
+('Carlos', 'Hernandez', 'Lopez', 'carlos.hernandez@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$GUMoJQSgVAqhlBJi7L333g$aqxnkzUaQx9CxPpgWnz5mw4ijaQUBbb8H+s7YUKBKX4', '2026-02-10 20:49:14', 2, 1),
+('Maria', 'De La Concepcion', 'Gonzalez', 'maria.gonzalez@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$GUMoJQSgVAqhlBJi7L333g$aqxnkzUaQx9CxPpgWnz5mw4ijaQUBbb8H+s7YUKBKX4', '2026-02-11 01:59:14', 2, 1),
+('Luis', 'Ramirez', 'Torres', 'luis.ramirez@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$GUMoJQSgVAqhlBJi7L333g$aqxnkzUaQx9CxPpgWnz5mw4ijaQUBbb8H+s7YUKBKX4', '2026-02-11 01:59:54', 2, 1),
+('Jose', 'Perez', 'Castillo', 'jose.perez@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$GUMoJQSgVAqhlBJi7L333g$aqxnkzUaQx9CxPpgWnz5mw4ijaQUBbb8H+s7YUKBKX4', '2026-02-11 02:00:40', 2, 1),
+('Fernanda', 'Sanchez', 'Morales', 'fernanda.sanchez@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$GUMoJQSgVAqhlBJi7L333g$aqxnkzUaQx9CxPpgWnz5mw4ijaQUBbb8H+s7YUKBKX4', '2026-02-11 02:01:44', 2, 1),
+('Diego', 'Navarro', 'Ortiz', 'diego.navarro@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$GUMoJQSgVAqhlBJi7L333g$aqxnkzUaQx9CxPpgWnz5mw4ijaQUBbb8H+s7YUKBKX4', '2026-02-11 02:03:52', 2, 1),
+('Laura', 'Cruz', 'Mendoza', 'laura.cruz@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$GUMoJQSgVAqhlBJi7L333g$aqxnkzUaQx9CxPpgWnz5mw4ijaQUBbb8H+s7YUKBKX4', '2026-02-11 02:04:45', 3, 1),
+('Miguel', 'Rojas', 'Vazquez', 'miguel.rojas@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$GUMoJQSgVAqhlBJi7L333g$aqxnkzUaQx9CxPpgWnz5mw4ijaQUBbb8H+s7YUKBKX4', '2026-02-11 02:05:20', 3, 1),
+('Daniela', 'Jimenez', 'Herrera', 'daniela.jimenez@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$GUMoJQSgVAqhlBJi7L333g$aqxnkzUaQx9CxPpgWnz5mw4ijaQUBbb8H+s7YUKBKX4', '2026-02-11 02:05:56', 3, 1);
 
 insert into usuario_membresia(id_usuario, id_membresia, fecha_inicio, fecha_fin, activa)
 values
@@ -140,9 +194,9 @@ values
 (5, 1, '2026-02-11 02:00:40', '2126-02-11 02:00:40', true),
 (6, 1, '2026-02-11 02:01:44', '2126-02-11 02:01:44', true),
 (7, 1, '2026-02-11 02:03:52', '2126-02-11 02:03:52', true),
-(8, 1, '2026-02-11 02:04:45', '2126-02-11 02:04:45', true),
-(9, 1, '2026-02-11 02:05:20', '2126-02-11 02:05:20', true),
-(10,1, '2026-02-11 02:05:56', '2126-02-11 02:05:56', true);
+(8, 2, '2026-02-11 02:04:45', '2126-02-11 02:04:45', true),
+(9, 3, '2026-02-11 02:05:20', '2126-02-11 02:05:20', true),
+(10,4, '2026-02-11 02:05:56', '2126-02-11 02:05:56', true);
 
 -- 4. Recursos y Exámenes (Dependen de Subtema, Tipo y Estado)
 
@@ -317,12 +371,12 @@ insert into intento (calificacion, fecha, id_usuario, id_examen) values (85,'202
 insert into intento (calificacion, fecha, id_usuario, id_examen) values (90,'2026-02-12 00:02:25',2,2);
 insert into intento (calificacion, fecha, id_usuario, id_examen) values (78,'2026-02-12 00:02:25',3,3);
 
-insert into nota (contenido, fecha_creacion, fecha_actualizacion, es_compartida, id_usuario, id_recurso) 
-values ('Repasar matrices y determinantes para el examen final de algebra','2026-03-01 22:00:00','2026-03-01 22:00:00',1,1,4);
-insert into nota (contenido, fecha_creacion, fecha_actualizacion, es_compartida, id_usuario, id_recurso) 
-values ('Formulas importantes de calculo integral y derivadas parciales','2026-03-01 22:05:00','2026-03-01 22:05:00',0,2,4);
-insert into nota (contenido, fecha_creacion, fecha_actualizacion, es_compartida, id_usuario, id_recurso) 
-values ('Ejercicios clave sobre leyes de Newton y dinamica de fluidos','2026-03-01 22:10:00','2026-03-01 22:10:00',1,3,4);
+insert into nota (titulo, contenido, fecha_creacion, fecha_actualizacion, es_compartida, id_usuario, id_recurso) 
+values ('Nota 1', 'Repasar matrices y determinantes para el examen final de algebra','2026-03-01 22:00:00','2026-03-01 22:00:00',1,1,4);
+insert into nota (titulo, contenido, fecha_creacion, fecha_actualizacion, es_compartida, id_usuario, id_recurso) 
+values ('Formulas de calculo', 'Formulas importantes de calculo integral y derivadas parciales','2026-03-01 22:05:00','2026-03-01 22:05:00',0,2,4);
+insert into nota (titulo, contenido, fecha_creacion, fecha_actualizacion, es_compartida, id_usuario, id_recurso) 
+values ('Mis notas', 'Ejercicios clave sobre leyes de Newton y dinamica de fluidos','2026-03-01 22:10:00','2026-03-01 22:10:00',1,3,4);
 
 -- 7. Para conectar los Temas con los Subtemas
 insert into tema_subtema (id_tema, id_subtema) values (1, 1);
@@ -466,3 +520,88 @@ INSERT INTO opcion (respuesta, es_correcta, id_pregunta) VALUES
 ('Solo en murciélago', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Qué transformaciones puede hacer el Conde Drácula?' AND id_examen = 13)),
 ('En rata, gato y cuervo', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Qué transformaciones puede hacer el Conde Drácula?' AND id_examen = 13)),
 ('En pantera y serpiente', 0, (SELECT id_pregunta FROM pregunta WHERE contenido = '¿Qué transformaciones puede hacer el Conde Drácula?' AND id_examen = 13));
+
+-- ============================================================
+-- RESPUESTAS PARA INTENTO 1 (usuario 1, examen 1, cal=85)
+-- Preguntas 1,2,3 → 3 preguntas, para 85% necesitamos ~2-3 correctas
+-- Con 3 preguntas: 3/3=100%, 2/3=66% → ponemos las 3 correctas
+-- y ajustamos la calificacion al recalcular (los datos de seed son aproximados)
+-- ============================================================
+
+-- Pregunta 1: ¿Qué es un vector? → correcta: 'Magnitud con dirección' (opcion 1)
+INSERT INTO respuesta_intento (id_intento, id_pregunta, id_opcion, es_correcta)
+VALUES (1, 1, 1, true);
+
+-- Pregunta 2: ¿Qué es una matriz? → correcta: 'Arreglo de números' (opcion 3)
+INSERT INTO respuesta_intento (id_intento, id_pregunta, id_opcion, es_correcta)
+VALUES (1, 2, 3, true);
+
+-- Pregunta 3: ¿Qué es el determinante? → incorrecta: 'Vector unitario' (opcion 6)
+INSERT INTO respuesta_intento (id_intento, id_pregunta, id_opcion, es_correcta)
+VALUES (1, 3, 6, false);
+
+-- ============================================================
+-- RESPUESTAS PARA INTENTO 2 (usuario 2, examen 2, cal=90)
+-- Examen 2 tiene preguntas 4, 6, 13
+-- Pregunta 4: ¿Qué es una derivada?
+-- Pregunta 6: Derivada de una constante
+-- Pregunta 13: ¿Qué es una derivada? (repetida en examen 2)
+-- ============================================================
+
+-- Pregunta 4: ¿Qué es una derivada? → correcta: 'Razón de cambio' (opcion 7)
+INSERT INTO respuesta_intento (id_intento, id_pregunta, id_opcion, es_correcta)
+VALUES (2, 4, 7, true);
+
+-- Pregunta 6: Derivada de una constante → correcta: '0' (opcion 11)
+INSERT INTO respuesta_intento (id_intento, id_pregunta, id_opcion, es_correcta)
+VALUES (2, 6, 11, true);
+
+-- Pregunta 13: ¿Qué es una derivada? → incorrecta: 'Área bajo la curva' (opcion 8)
+INSERT INTO respuesta_intento (id_intento, id_pregunta, id_opcion, es_correcta)
+VALUES (2, 13, 8, false);
+
+-- ============================================================
+-- RESPUESTAS PARA INTENTO 3 (usuario 3, examen 3, cal=78)
+-- Examen 3 tiene preguntas 7, 8, 9
+-- Pregunta 7: ¿Qué es velocidad?
+-- Pregunta 8: ¿Qué es aceleración?
+-- Pregunta 9: Unidad de aceleración
+-- ============================================================
+
+-- Pregunta 7: ¿Qué es velocidad? → correcta: 'Cambio de posición' (opcion 13)
+INSERT INTO respuesta_intento (id_intento, id_pregunta, id_opcion, es_correcta)
+VALUES (3, 7, 13, true);
+
+-- Pregunta 8: ¿Qué es aceleración? → incorrecta: 'Distancia recorrida' (opcion 16)
+INSERT INTO respuesta_intento (id_intento, id_pregunta, id_opcion, es_correcta)
+VALUES (3, 8, 16, false);
+
+-- Pregunta 9: Unidad de aceleración → correcta: 'm/s²' (opcion 17)
+INSERT INTO respuesta_intento (id_intento, id_pregunta, id_opcion, es_correcta)
+VALUES (3, 9, 17, true);
+
+-- OFFLINE
+-- Usuario 1 descarga recurso 1 y 2
+insert into offline (id_usuario, id_recurso, fecha_descarga, ultima_sincronizacion, activo)
+values (1, 1, NOW(), NOW(), true);
+
+insert into offline (id_usuario, id_recurso, fecha_descarga, ultima_sincronizacion, activo)
+values (1, 2, NOW(), NOW(), true);
+
+-- Usuario 2 descarga recurso 3
+insert into offline (id_usuario, id_recurso, fecha_descarga, ultima_sincronizacion, activo)
+values (2, 3, NOW(), NOW(), true);
+
+-- Usuario 3 descarga recurso 4 pero lo eliminó (soft delete)
+insert into offline (id_usuario, id_recurso, fecha_descarga, ultima_sincronizacion, activo)
+values (3, 4, NOW(), NOW(), false);
+
+-- Usuario premium descarga varios
+insert into offline (id_usuario, id_recurso, fecha_descarga, ultima_sincronizacion, activo)
+values (8, 1, NOW(), NOW(), true);
+
+insert into offline (id_usuario, id_recurso, fecha_descarga, ultima_sincronizacion, activo)
+values (8, 2, NOW(), NOW(), true);
+
+insert into offline (id_usuario, id_recurso, fecha_descarga, ultima_sincronizacion, activo)
+values (8, 3, NOW(), NOW(), true);

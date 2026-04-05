@@ -1,4 +1,3 @@
-
 from typing import Optional, List
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
@@ -10,7 +9,56 @@ from app.models.estado import Estado
 from app.models.subtema import Subtema
 from app.models.etiqueta import Etiqueta
 from app.schemas.recurso import RecursoCreate, RecursoUpdate
+from app.models.tema import Tema
+from app.models.usuario import Usuario
 
+# Favoritos
+def agregar_favorito(db: Session, id_usuario: int, id_recurso: int):
+    usuario = db.query(Usuario).filter(Usuario.id_usuario == id_usuario).first()
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    recurso = db.query(Recurso).filter(Recurso.id_recurso == id_recurso).first()
+    if not recurso:
+        raise HTTPException(status_code=404, detail="Recurso no encontrado")
+
+    if recurso in usuario.recursos:
+        raise HTTPException(
+            status_code=400,
+            detail="El recurso ya está en favoritos"
+        )
+
+    usuario.recursos.append(recurso)
+
+    db.commit()
+    return {"message": "Recurso agregado a favoritos"}
+
+def quitar_favorito(db: Session, id_usuario: int, id_recurso: int):
+    usuario = db.query(Usuario).filter(Usuario.id_usuario == id_usuario).first()
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    recurso = db.query(Recurso).filter(Recurso.id_recurso == id_recurso).first()
+    if not recurso:
+        raise HTTPException(status_code=404, detail="Recurso no encontrado")
+
+    if recurso not in usuario.recursos:
+        raise HTTPException(
+            status_code=400,
+            detail="El recurso no está en favoritos"
+        )
+
+    usuario.recursos.remove(recurso)
+
+    db.commit()
+    return {"message": "Recurso eliminado de favoritos"}
+
+def get_favoritos(db: Session, id_usuario: int):
+    usuario = db.query(Usuario).filter(Usuario.id_usuario == id_usuario).first()
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    return usuario.recursos
 
 def get_recurso(db: Session, recurso_id: int) -> Optional[Recurso]:
     """Obtiene un Recurso por su ID."""
@@ -19,6 +67,62 @@ def get_recurso(db: Session, recurso_id: int) -> Optional[Recurso]:
     
     return db.query(Recurso).filter(Recurso.id_recurso == recurso_id).first()
 
+def get_recursos_by_tema(db: Session, id_tema: int):
+    tema = db.query(Tema).filter(Tema.id_tema == id_tema).first()
+    
+    if not tema:
+        return []
+
+    recursos = []
+
+    for subtema in tema.subtemas:
+        for recurso in subtema.recursos:
+            recursos.append({
+                "id_recurso": recurso.id_recurso,
+                "titulo": recurso.titulo,
+                "descripcion": recurso.descripcion,
+                "url_archivo": recurso.url_archivo,
+                "id_tipo": recurso.id_tipo,
+                "id_subtema": subtema.id_subtema,
+                "subtema": subtema.nombre,
+                "tema": tema.nombre
+            })
+
+    return recursos
+
+def get_temas_recursos(db: Session):
+    temas = db.query(Tema).all()
+
+    result = []
+
+    for tema in temas:
+        tema_data = {
+            "id_tema": tema.id_tema,
+            "nombre": tema.nombre,
+            "subtemas": []
+        }
+
+        for subtema in tema.subtemas:
+            subtema_data = {
+                "id_subtema": subtema.id_subtema,
+                "nombre": subtema.nombre,
+                "recursos": []
+            }
+
+            for recurso in subtema.recursos:
+                subtema_data["recursos"].append({
+                    "id_recurso": recurso.id_recurso,
+                    "titulo": recurso.titulo,
+                    "descripcion": recurso.descripcion,
+                    "url_archivo": recurso.url_archivo,
+                    "id_tipo": recurso.id_tipo,
+                })
+
+            tema_data["subtemas"].append(subtema_data)
+
+        result.append(tema_data)
+
+    return result
 
 def get_recurso_by_titulo(db: Session, titulo: str) -> Optional[Recurso]:
     """

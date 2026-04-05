@@ -29,3 +29,8 @@ class Recurso(Base):
     
     # Relación 1:M
     notas = relationship("Nota", back_populates="recurso")
+    offline = relationship(
+        "Offline",
+        back_populates="recurso",
+        cascade="all, delete-orphan"
+    )

@@ -4,9 +4,14 @@ from sqlalchemy.orm import Session
 from typing import List
 from app.api.deps import get_db, get_current_active_user
 from app.models.usuario import Usuario
+from app.models.intento import Intento
+from app.models.examen import Examen
+from app.models.vista_contenido import VistaContenido
+from app.models.recurso import Recurso
+from app.models.publicacion import Publicacion
+from app.models.progreso_contenido import ProgresoContenido
 
 router = APIRouter(prefix="/home", tags=["Home"])
-
 
 @router.get("/usuario/progreso-examenes")
 def obtener_progreso_examenes_usuario(
@@ -16,9 +21,6 @@ def obtener_progreso_examenes_usuario(
     current_user: Usuario = Depends(get_current_active_user)
 ):
     """Obtiene el progreso de exámenes del usuario actual."""
-    from app.models.intento import Intento
-    from app.models.examen import Examen
-    
     # Obtener intentos del usuario
     intentos = db.query(Intento).filter(
         Intento.id_usuario == current_user.id_usuario
@@ -53,7 +55,6 @@ def obtener_progreso_examenes_usuario(
         "examenes": examenes_info
     }
 
-
 @router.get("/usuario/recientes")
 def obtener_contenido_reciente(
     limit: int = Query(10, ge=1, le=50),
@@ -61,10 +62,6 @@ def obtener_contenido_reciente(
     current_user: Usuario = Depends(get_current_active_user)
 ):
     """Obtiene el contenido visto recientemente por el usuario."""
-    from app.models.vista_contenido import VistaContenido
-    from app.models.recurso import Recurso
-    from app.models.publicacion import Publicacion
-    
     vistas = db.query(VistaContenido).filter(
         VistaContenido.id_usuario == current_user.id_usuario
     ).order_by(VistaContenido.fecha_vista.desc()).limit(limit).all()
@@ -100,7 +97,6 @@ def obtener_contenido_reciente(
     
     return resultados
 
-
 @router.get("/usuario/recursos-leidos")
 def obtener_recursos_leidos_usuario(
     skip: int = Query(0, ge=0),
@@ -109,10 +105,6 @@ def obtener_recursos_leidos_usuario(
     current_user: Usuario = Depends(get_current_active_user)
 ):
     """Obtiene los recursos leídos por el usuario con su progreso."""
-    from app.models.vista_contenido import VistaContenido
-    from app.models.progreso_contenido import ProgresoContenido
-    from app.models.recurso import Recurso
-    
     # Obtener recursos vistos
     vistas = db.query(VistaContenido).filter(
         VistaContenido.id_usuario == current_user.id_usuario,

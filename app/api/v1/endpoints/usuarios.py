@@ -7,13 +7,16 @@ from datetime import datetime
 
 from app.api.deps import get_db, get_current_active_user
 from app.crud import crud_usuario
+from app.crud import crud_usuario_membresia
 from app.models.usuario import Usuario as UsuarioModel
 from app.schemas.usuario import (
     Usuario, 
     UsuarioPublico,
     UsuarioCreate, 
     UsuarioUpdate,
-    UsuarioConRol
+    UsuarioConRol,
+    MembresiaUsuarioResponse,
+    UsuarioMembresiaCreate
 )
 from app.core.permissions import PermissionChecker
 
@@ -91,6 +94,14 @@ def listar_usuarios(
     
     return usuarios
 
+@router.get("/membresia/{id_usuario}", response_model=MembresiaUsuarioResponse)
+def get_membresia_usuario(id_usuario: int, db: Session = Depends(get_db)):
+    data = crud_usuario.obtener_membresia_actual(db, id_usuario)
+
+    if not data:
+        raise HTTPException(status_code=404, detail="Usuario sin membresía")
+
+    return data
 
 @router.get("/me", response_model=UsuarioPublico)
 def obtener_perfil_actual(
@@ -153,6 +164,34 @@ def crear_usuario(
     logger.info(f"Usuario creado: {usuario.id_usuario} - {usuario.correo} - Estado: {usuario.id_estado}")
     
     return usuario
+
+@router.post("/membresia", status_code=status.HTTP_201_CREATED)
+def crear_usuario_membresia_endpoint(
+    request: Request,
+    data: UsuarioMembresiaCreate,
+    db: Session = Depends(get_db)
+):
+
+    check_rate_limit(request, max_requests=5, window_seconds=60)
+
+    logger.info(
+        f"Asignando membresía {data.id_membresia} al usuario {data.id_usuario} desde IP {request.client.host}"
+    )
+
+    try:
+        nueva_membresia = crud_usuario.crear_usuario_membresia(
+            db=db,
+            id_usuario=data.id_usuario,
+            id_membresia=data.id_membresia
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    logger.info(
+        f"Membresía creada: Usuario {data.id_usuario} - Membresía {data.id_membresia}"
+    )
+
+    return nueva_membresia
 
 @router.put("/{id_usuario}", response_model=UsuarioPublico)
 def actualizar_usuario(
