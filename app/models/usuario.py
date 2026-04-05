@@ -27,3 +27,8 @@ class Usuario(Base):
     
     
     membresias = relationship("UsuarioMembresia", back_populates="usuario")
+    offline = relationship(
+        "Offline",
+        back_populates="usuario",
+        cascade="all, delete-orphan"
+    )

@@ -10,6 +10,7 @@ from app.models.rol import Rol
 from app.models.estado import Estado
 from app.schemas.usuario import UsuarioCreate, UsuarioUpdate
 from app.models.membresia import Membresia
+from app.models.usuario_membresia import UsuarioMembresia
 from app.crud.crud_usuario_membresia import crear_usuario_membresia
 
 def get_usuario(db: Session, usuario_id: int) -> Optional[Usuario]:
@@ -18,6 +19,25 @@ def get_usuario(db: Session, usuario_id: int) -> Optional[Usuario]:
     
     return db.query(Usuario).filter(Usuario.id_usuario == usuario_id).first()
 
+def obtener_membresia_actual(db: Session, id_usuario: int):
+    membresia_usuario = (
+        db.query(UsuarioMembresia)
+        .filter(UsuarioMembresia.id_usuario == id_usuario)
+        .order_by(UsuarioMembresia.activa.desc(), UsuarioMembresia.fecha_inicio.desc())
+        .first()
+    )
+
+    if not membresia_usuario:
+        return None
+
+    membresia = membresia_usuario.membresia
+
+    return {
+        "id_membresia": membresia.id_membresia,
+        "nombre": membresia.nombre,
+        "tipo": membresia.tipo,
+        "es_premium": membresia.tipo != "Freemium"
+    }
 
 def get_usuario_by_nombre(db: Session, nombre: str) -> Optional[Usuario]:
     
@@ -318,3 +338,4 @@ def cambiar_contrasena(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error al cambiar la contraseña"
         )
+

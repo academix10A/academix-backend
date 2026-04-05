@@ -9,6 +9,7 @@ class Nota(Base):
     __tablename__ = "nota"
 
     id_nota              = Column(Integer, primary_key=True, index=True)
+    titulo               = Column(String(25), nullable=False)
     contenido            = Column(Text, nullable=False)
 
     fecha_creacion       = Column(DateTime, default=datetime.utcnow, nullable=False)

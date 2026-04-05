@@ -2,104 +2,82 @@ from pydantic import BaseModel, Field, field_validator
 from typing import Optional, List
 import re
 from html import escape
+from datetime import datetime
 
 
 class ExamenBase(BaseModel):
     titulo: Optional[str] = Field(None, min_length=3, max_length=200)
     descripcion: Optional[str] = Field(None, min_length=10, max_length=1000)
-    cantidad_preguntas: Optional[int] = Field(None, gt=0, le=100, description="Cantidad de preguntas debe ser entre 1 y 100")
-    id_subtema: Optional[int] = Field(None, gt=0, description="ID del subtema debe ser positivo")
-    
+    cantidad_preguntas: Optional[int] = Field(None, gt=0, le=100)
+    id_subtema: Optional[int] = Field(None, gt=0)
+
     @field_validator('titulo')
     @classmethod
     def sanitizar_titulo(cls, v: Optional[str]) -> Optional[str]:
-        """Sanitiza el título del examen"""
         if v is None:
             return v
-        
-        # Eliminar espacios extras
         v = v.strip()
         v = re.sub(r'\s+', ' ', v)
-        
-        # Validar longitud después de limpiar
         if len(v) < 3:
             raise ValueError('El título debe tener al menos 3 caracteres')
-        
-        # Permitir letras, números, espacios, acentos, guiones, paréntesis y puntuación básica
         if not re.match(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\-_.,;:()¿?¡!]+$', v):
             raise ValueError('El título contiene caracteres no permitidos')
-        
-        # Escapar HTML para prevenir XSS
-        v = escape(v)
-        
-        return v
-    
+        return escape(v)
+
     @field_validator('descripcion')
     @classmethod
     def sanitizar_descripcion(cls, v: Optional[str]) -> Optional[str]:
-        """Sanitiza la descripción del examen"""
         if v is None:
             return v
-        
-        # Eliminar espacios extras
         v = v.strip()
         v = re.sub(r'\s+', ' ', v)
-        
-        # Validar longitud después de limpiar
         if len(v) < 10:
             raise ValueError('La descripción debe tener al menos 10 caracteres')
-        
-        # Permitir más caracteres en descripción (permite saltos de línea representados como \n)
-        # Bloquear etiquetas HTML y scripts
         if re.search(r'<script|<iframe|javascript:|onerror=|onclick=', v, re.IGNORECASE):
             raise ValueError('Contenido no permitido en la descripción')
-        
-        # Escapar HTML
-        v = escape(v)
-        
-        return v
+        return escape(v)
 
+class ExamenRealizadoDetalle(BaseModel):
+    id_intento: int
+    id_examen: int
+    titulo_examen: str
+    calificacion: float
+    fecha: datetime
+    respuestas_correctas: int
+    cantidad_preguntas: int
+    aprobo: bool
+    porcentaje: float
+
+    class Config:
+        from_attributes = True
 
 class ExamenCreate(BaseModel):
-    titulo: str = Field(..., min_length=3, max_length=200, description="Título del examen")
-    descripcion: str = Field(..., min_length=10, max_length=1000, description="Descripción del examen")
-    cantidad_preguntas: int = Field(..., gt=0, le=100, description="Cantidad de preguntas debe ser entre 1 y 100")
-    id_subtema: int = Field(..., gt=0, description="ID del subtema (debe existir)")
-    
+    titulo: str = Field(..., min_length=3, max_length=200)
+    descripcion: str = Field(..., min_length=10, max_length=1000)
+    cantidad_preguntas: int = Field(..., gt=0, le=100)
+    id_subtema: int = Field(..., gt=0)
+
     @field_validator('titulo')
     @classmethod
     def sanitizar_titulo(cls, v: str) -> str:
-        """Sanitiza el título del examen"""
         v = v.strip()
         v = re.sub(r'\s+', ' ', v)
-        
         if len(v) < 3:
             raise ValueError('El título debe tener al menos 3 caracteres')
-        
         if not re.match(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\-_.,;:()¿?¡!]+$', v):
             raise ValueError('El título contiene caracteres no permitidos')
-        
-        v = escape(v)
-        
-        return v
-    
+        return escape(v)
+
     @field_validator('descripcion')
     @classmethod
     def sanitizar_descripcion(cls, v: str) -> str:
-        """Sanitiza la descripción del examen"""
         v = v.strip()
         v = re.sub(r'\s+', ' ', v)
-        
         if len(v) < 10:
             raise ValueError('La descripción debe tener al menos 10 caracteres')
-        
-        # Bloquear código malicioso
         if re.search(r'<script|<iframe|javascript:|onerror=|onclick=', v, re.IGNORECASE):
             raise ValueError('Contenido no permitido en la descripción')
-        
-        v = escape(v)
-        
-        return v
+        return escape(v)
 
 
 class ExamenUpdate(BaseModel):
@@ -107,50 +85,35 @@ class ExamenUpdate(BaseModel):
     descripcion: Optional[str] = Field(None, min_length=10, max_length=1000)
     cantidad_preguntas: Optional[int] = Field(None, gt=0, le=100)
     id_subtema: Optional[int] = Field(None, gt=0)
-    
+
     @field_validator('titulo')
     @classmethod
     def sanitizar_titulo(cls, v: Optional[str]) -> Optional[str]:
-        """Sanitiza el título si está presente"""
         if v is None:
             return v
-        
         v = v.strip()
         v = re.sub(r'\s+', ' ', v)
-        
         if len(v) < 3:
             raise ValueError('El título debe tener al menos 3 caracteres')
-        
         if not re.match(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\-_.,;:()¿?¡!]+$', v):
             raise ValueError('El título contiene caracteres no permitidos')
-        
-        v = escape(v)
-        
-        return v
-    
+        return escape(v)
+
     @field_validator('descripcion')
     @classmethod
     def sanitizar_descripcion(cls, v: Optional[str]) -> Optional[str]:
-        """Sanitiza la descripción si está presente"""
         if v is None:
             return v
-        
         v = v.strip()
         v = re.sub(r'\s+', ' ', v)
-        
         if len(v) < 10:
             raise ValueError('La descripción debe tener al menos 10 caracteres')
-        
         if re.search(r'<script|<iframe|javascript:|onerror=|onclick=', v, re.IGNORECASE):
             raise ValueError('Contenido no permitido en la descripción')
-        
-        v = escape(v)
-        
-        return v
+        return escape(v)
 
 
-
-# Schema público de opción (SIN es_correcta — el usuario no debe verla) 
+# Schema público de opción (SIN es_correcta)
 class OpcionPublica(BaseModel):
     id_opcion: int
     respuesta: str
@@ -158,14 +121,16 @@ class OpcionPublica(BaseModel):
     class Config:
         from_attributes = True
 
-#  Schema público de opción con resultado (DESPUÉS de responder) 
+
+# Schema público de opción con resultado (DESPUÉS de responder)
 class OpcionResultado(BaseModel):
     id_opcion: int
     respuesta: str
-    es_correcta: bool  
+    es_correcta: bool
 
     class Config:
         from_attributes = True
+
 
 # Pregunta con sus opciones públicas
 class PreguntaConOpciones(BaseModel):
@@ -176,7 +141,8 @@ class PreguntaConOpciones(BaseModel):
     class Config:
         from_attributes = True
 
-#  Examen completo
+
+# Examen completo (para tomar el examen)
 class ExamenCompleto(BaseModel):
     id_examen: int
     titulo: str
@@ -188,39 +154,69 @@ class ExamenCompleto(BaseModel):
     class Config:
         from_attributes = True
 
-# Lo que el frontend envía al terminar el examen 
+
+# Lo que el frontend envía al terminar el examen
 class RespuestaUsuario(BaseModel):
     id_pregunta: int
     id_opcion: int
+
 
 class ExamenSubmit(BaseModel):
     id_examen: int
     id_usuario: int
     respuestas: List[RespuestaUsuario]
 
-#  Detalle de una pregunta en el resultado 
+
+class ExamenRealizado(BaseModel):
+    id_intento: int
+    id_examen: int
+    titulo_examen: str
+    calificacion: float
+    fecha: datetime
+
+    class Config:
+        from_attributes = True
+
+
+# Detalle de una pregunta en el resultado
 class PreguntaResultado(BaseModel):
     id_pregunta: int
     contenido: str
     id_opcion_elegida: int
     respuesta_elegida: str
     es_correcta: bool
-    opciones: List[OpcionResultado]  
+    opciones: List[OpcionResultado]
+
 
 # Resultado completo del examen
 class ExamenResultado(BaseModel):
     id_intento: int
     id_examen: int
     titulo_examen: str
-    calificacion: float          
+    calificacion: float
     correctas: int
     total: int
-    porcentaje: float           
+    porcentaje: float
     preguntas: List[PreguntaResultado]
+
+
+# ── Schema principal de Examen (el que usa GET /examen/) ──────────────────────
+# Incluye nombre_subtema para que Flutter pueda filtrar por subtema sin
+# hacer llamadas extra al backend.
+class SubtemaBasico(BaseModel):
+    """Datos mínimos del subtema embebidos en la respuesta de Examen."""
+    id_subtema: int
+    nombre: str
+    nivel_dificultad: Optional[str] = None
+
+    class Config:
+        from_attributes = True
 
 
 class Examen(ExamenBase):
     id_examen: int
-    
-    class Config: 
+    # Subtema anidado — Flutter lee subtema["nombre"] para los chips de filtro
+    subtema: Optional[SubtemaBasico] = None
+
+    class Config:
         from_attributes = True

@@ -57,6 +57,18 @@ class UsuarioBase(BaseModel):
         
         return v
 
+class MembresiaUsuarioResponse(BaseModel):
+    id_membresia: int
+    nombre: str
+    tipo: str
+    es_premium: bool
+
+    class Config:
+        from_attributes = True
+
+class UsuarioMembresiaCreate(BaseModel):
+    id_usuario: int
+    id_membresia: int
 
 class UsuarioCreate(BaseModel):
 
