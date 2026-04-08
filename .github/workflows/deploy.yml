@@ -13,6 +13,20 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install pytest httpx
+
+    - name: Run tests
+      run: |
+        PYTHONPATH=. ENV=test pytest --maxfail=1 --disable-warnings -q
+
     - name: Login Docker Hub
       uses: docker/login-action@v3
       with:
@@ -36,7 +50,6 @@ jobs:
         script: |
           cd ~/academix
 
-          # CREAR .env AUTOMATICAMENTE
           echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
           echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env.backend
@@ -49,7 +62,6 @@ jobs:
 
           docker pull ${{ secrets.DOCKER_USERNAME }}/academix-backend:latest
 
-          # SOLUCION AL BUG DE DOCKER-COMPOSE
           docker-compose stop backend || true
           docker-compose rm -f backend || true
 
