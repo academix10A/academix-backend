@@ -42,9 +42,9 @@ jobs:
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env.backend
           echo "PROJECT_NAME=${{ secrets.PROJECT_NAME }}" >> .env.backend
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env.backend
-          echo "SECRET_KEY=${{ secrets.PAYPAL_CLIENT_ID }}" >> .env.backend
-          echo "SECRET_KEY=${{ secrets.PAYPAL_CLIENT_SECRET }}" >> .env.backend
-          echo "SECRET_KEY=${{ secrets.PAYPAL_API }}" >> .env.backend
+          echo "PAYPAL_CLIENT_ID=${{ secrets.PAYPAL_CLIENT_ID }}" >> .env.backend
+          echo "PAYPAL_CLIENT_SECRET=${{ secrets.PAYPAL_CLIENT_SECRET }}" >> .env.backend
+          echo "PAYPAL_API=${{ secrets.PAYPAL_API }}" >> .env.backend
           echo "ACCESS_TOKEN_EXPIRE_MINUTES=${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}" >> .env.backend
 
           docker pull ${{ secrets.DOCKER_USERNAME }}/academix-backend:latest
