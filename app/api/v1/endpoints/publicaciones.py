@@ -1,78 +1,123 @@
-# publicaciones.py
-from fastapi import APIRouter, Depends, HTTPException
+# app/api/v1/endpoints/publicaciones.py
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from typing import List
-from app.api.deps import get_db
+from typing import List, Optional
+
+from app.api.deps import get_db, get_current_active_user
 from app.crud import crud_publicacion
-from app.schemas.publicacion import Publicacion, PublicacionCreate, PublicacionUpdate
+from app.schemas.publicacion import (
+    Publicacion, PublicacionCreate, PublicacionUpdate,
+    PublicacionResumen, PublicacionesResponse,
+)
 from app.core.permissions import PermissionChecker
+from app.models.usuario import Usuario
 
 router = APIRouter(prefix="/publicacion", tags=["Publicaciones"])
 
-solo_admin = PermissionChecker(roles=["admin"])
-usuarios_activos = PermissionChecker(membresias=["premium", "gratis"])
+solo_admin        = PermissionChecker(roles=["admin"])
+usuarios_activos  = PermissionChecker(membresias=["premium", "gratis"])
 
-@router.get("/", response_model=List[Publicacion])
-def list_publicacion(
-    skip: int = 0,
-    limit: int = 100,
-    db: Session = Depends(get_db)
+
+# ── GET / — listado con búsqueda y paginación ─────────────────────────────────
+
+@router.get("/", response_model=PublicacionesResponse)
+def list_publicaciones(
+    skip:           int            = Query(0,  ge=0),
+    limit:          int            = Query(20, ge=1, le=100),
+    titulo:         Optional[str]  = Query(None, description="Buscar por título"),
+    nombre_usuario: Optional[str]  = Query(None, description="Buscar por nombre del autor"),
+    etiqueta:       Optional[str]  = Query(None, description="Filtrar por etiqueta"),
+    db: Session = Depends(get_db),
 ):
-    """Lista todos los publicacion con paginación."""
-    publicaciones = crud_publicacion.get_publicaciones(db, skip=skip, limit=limit)
-    return publicaciones
+    """
+    Lista publicaciones con filtros opcionales y paginación.
+    - `titulo`         → búsqueda parcial en el título
+    - `nombre_usuario` → búsqueda parcial en nombre/apellido del autor
+    - `etiqueta`       → filtra por nombre de etiqueta
+    """
+    items, total = crud_publicacion.get_publicaciones(
+        db,
+        skip=skip,
+        limit=limit,
+        titulo=titulo,
+        nombre_usuario=nombre_usuario,
+        etiqueta=etiqueta,
+    )
+    return PublicacionesResponse(items=items, total=total, skip=skip, limit=limit)
+
+
+# ── GET /titulo/{titulo} ──────────────────────────────────────────────────────
 
 @router.get("/titulo/{titulo}", response_model=Publicacion)
 def get_publicacion_by_titulo(titulo: str, db: Session = Depends(get_db)):
-    """Obtiene un publicacion por nombre."""
     publicacion = crud_publicacion.get_publicacion_by_titulo(db, titulo=titulo)
     if not publicacion:
-        raise HTTPException(
-            status_code=404, 
-            detail=f"Publicacion '{publicacion}' no encontrado"
-        )
+        raise HTTPException(status_code=404, detail=f"Publicación '{titulo}' no encontrada")
     return publicacion
+
+
+# ── GET /{id} — detalle completo ──────────────────────────────────────────────
 
 @router.get("/{publicacion_id}", response_model=Publicacion)
 def read_publicacion(publicacion_id: int, db: Session = Depends(get_db)):
-    """Obtiene un publicacion por ID."""
     publicacion = crud_publicacion.get_publicacion(db, publicacion_id=publicacion_id)
     if not publicacion:
-        raise HTTPException(status_code=404, detail="publicacion no encontrado")
+        raise HTTPException(status_code=404, detail="Publicación no encontrada")
     return publicacion
+
+
+# ── POST / — crear publicación (requiere auth) ────────────────────────────────
 
 @router.post("/", response_model=Publicacion, status_code=201)
-def create_publicacion(publicacion_in: PublicacionCreate, db: Session = Depends(get_db)):
-    """Crea un nuevo publicacion."""
-    # Validar que no exista publicacion con ese titulo
+def create_publicacion(
+    publicacion_in: PublicacionCreate,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_active_user),
+):
+    """Crea una publicación. El autor se toma del token JWT."""
     publicacion_exists = crud_publicacion.get_publicacion_by_titulo(db, titulo=publicacion_in.titulo)
     if publicacion_exists:
-        raise HTTPException(
-            status_code=400, 
-            detail="Ya existe un publicacion con ese titulo"
-        )
-    
-    publicacion = crud_publicacion.create_publicacion(db, publicacion_in=publicacion_in)
-    return publicacion
+        raise HTTPException(status_code=400, detail="Ya existe una publicación con ese título")
 
+    return crud_publicacion.create_publicacion(
+        db,
+        publicacion_in=publicacion_in,
+        id_usuario=current_user.id_usuario,
+    )
+
+
+# ── PUT /{id} — actualizar (solo el autor o admin) ────────────────────────────
 
 @router.put("/{publicacion_id}", response_model=Publicacion)
 def update_publicacion(
-    publicacion_id: int, 
-    publicacion_in: PublicacionUpdate, 
-    db: Session = Depends(get_db)
+    publicacion_id: int,
+    publicacion_in: PublicacionUpdate,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_active_user),
 ):
-    """Actualiza un publicacion existente."""
-    publicacion = crud_publicacion.update_publicacion(db, publicacion_id=publicacion_id, publicacion_in=publicacion_in)
+    publicacion = crud_publicacion.get_publicacion(db, publicacion_id=publicacion_id)
     if not publicacion:
-        raise HTTPException(status_code=404, detail="publicacion no encontrado")
-    return publicacion
+        raise HTTPException(status_code=404, detail="Publicación no encontrada")
 
+    if publicacion.id_usuario != current_user.id_usuario and current_user.rol.nombre != "admin":
+        raise HTTPException(status_code=403, detail="No tienes permiso para editar esta publicación")
+
+    return crud_publicacion.update_publicacion(db, publicacion_id=publicacion_id, publicacion_in=publicacion_in)
+
+
+# ── DELETE /{id} — eliminar (solo el autor o admin) ───────────────────────────
 
 @router.delete("/{publicacion_id}", response_model=Publicacion)
-def delete_publicacion(publicacion_id: int, db: Session = Depends(get_db)):
-    """Elimina un publicacion."""
-    publicacion = crud_publicacion.delete_publicacion(db, publicacion_id=publicacion_id)
+def delete_publicacion(
+    publicacion_id: int,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_active_user),
+):
+    publicacion = crud_publicacion.get_publicacion(db, publicacion_id=publicacion_id)
     if not publicacion:
-        raise HTTPException(status_code=404, detail="publicacion no encontrado")
-    return publicacion
+        raise HTTPException(status_code=404, detail="Publicación no encontrada")
+
+    if publicacion.id_usuario != current_user.id_usuario and current_user.rol.nombre != "admin":
+        raise HTTPException(status_code=403, detail="No tienes permiso para eliminar esta publicación")
+
+    return crud_publicacion.delete_publicacion(db, publicacion_id=publicacion_id)

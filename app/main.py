@@ -5,9 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.db.session import init_db
 from app.api.v1.api import tema, usuarios, auth, recursos, examen, subtema, estado, rol, tipo, etiqueta, publicaciones, nota, pregunta, opcion, intento, membresia, beneficio, vistas, progreso, home, usuario_membresia, paypal, search, offline
 import logging
-
-# Inicializar base de datos (crear tablas)
-init_db()
+from app.db.seed import run_seed
 
 app = FastAPI(
     title="Academix API",
@@ -56,6 +54,11 @@ app.include_router(home.router, prefix="/api")
 app.include_router(paypal.router, prefix="/api")
 app.include_router(search.router, prefix="/api")
 app.include_router(offline.router, prefix="/api")
+
+@app.on_event("startup")
+def on_startup():
+    init_db()
+    run_seed()
 
 @app.get("/")
 def root():

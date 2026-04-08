@@ -605,3 +605,16 @@ values (8, 2, NOW(), NOW(), true);
 
 insert into offline (id_usuario, id_recurso, fecha_descarga, ultima_sincronizacion, activo)
 values (8, 3, NOW(), NOW(), true);
+
+-- Publicación 1: Cálculo diferencial
+insert into publicacion_etiqueta (id_publicacion, id_etiqueta) values (1, 4); -- derivadas
+insert into publicacion_etiqueta (id_publicacion, id_etiqueta) values (1, 7); -- integrales
+insert into publicacion_etiqueta (id_publicacion, id_etiqueta) values (1, 1); -- álgebra
+
+-- Publicación 2: Física
+insert into publicacion_etiqueta (id_publicacion, id_etiqueta) values (2, 3); -- cinemática
+insert into publicacion_etiqueta (id_publicacion, id_etiqueta) values (2, 8); -- leyes de newton
+
+-- Publicación 3: Química
+insert into publicacion_etiqueta (id_publicacion, id_etiqueta) values (3, 5); -- estequiometría
+insert into publicacion_etiqueta (id_publicacion, id_etiqueta) values (3, 9); -- reacciones químicas

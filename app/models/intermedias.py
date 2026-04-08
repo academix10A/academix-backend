@@ -48,3 +48,10 @@ respuesta_intento = Table(
     Column('id_opcion', Integer, ForeignKey('opcion.id_opcion'), primary_key=True),
     Column('es_correcta', Boolean, default=False)
 )
+
+publicacion_etiqueta = Table(
+    "publicacion_etiqueta",
+    Base.metadata,
+    Column("id_publicacion", Integer, ForeignKey("publicacion.id_publicacion", ondelete="CASCADE"), primary_key=True),
+    Column("id_etiqueta",    Integer, ForeignKey("etiqueta.id_etiqueta",    ondelete="CASCADE"), primary_key=True),
+)
