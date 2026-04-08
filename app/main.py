@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 # from sqladmin import Admin
@@ -57,8 +58,9 @@ app.include_router(offline.router, prefix="/api")
 
 @app.on_event("startup")
 def on_startup():
-    init_db()
-    run_seed()
+    if os.getenv("ENV") != "test":
+        init_db()
+        run_seed()
 
 @app.get("/")
 def root():

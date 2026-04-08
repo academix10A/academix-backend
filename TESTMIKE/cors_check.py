@@ -1,1 +1,0 @@
-import requests; print('Checking CORS policy...')
