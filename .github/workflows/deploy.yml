@@ -61,7 +61,7 @@ jobs:
 
           echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
           echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
-          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env.backend
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > .env.backend
           echo "PROJECT_NAME=${{ secrets.PROJECT_NAME }}" >> .env.backend
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env.backend
           echo "PAYPAL_CLIENT_ID=${{ secrets.PAYPAL_CLIENT_ID }}" >> .env.backend
