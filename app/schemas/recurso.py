@@ -166,25 +166,22 @@ class RecursoUpdate(BaseModel):
 
 
 class Recurso(RecursoBase):
-    """Schema de respuesta completo"""
-    
     id_recurso: int
-    fecha_publicacion: datetime
+    fecha_publicacion: Optional[datetime] = None
     
     class Config:
         from_attributes = True
 
 
+
 class RecursoPublico(BaseModel):
-    """Schema PÚBLICO - Para respuestas"""
-    
     id_recurso: int
     titulo: str
     descripcion: Optional[str] = None
     contenido: Optional[str] = None
     url_archivo: Optional[str] = None
-    external_id: Optional[str]
-    fecha_publicacion: datetime
+    external_id: Optional[str] = None
+    fecha_publicacion: Optional[datetime] = None
     id_tipo: int
     id_estado: int
     id_subtema: int
