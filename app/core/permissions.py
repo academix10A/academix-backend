@@ -113,32 +113,62 @@ class PermissionChecker:
         )
 
 
+# class Beneficios:
+#     # Contenido
+#     BIBLIOTECA          = "acceso a biblioteca virtual"
+#     BUSQUEDA            = "busqueda y filtros avanzados"
+
+#     # Notas
+#     NOTAS               = "gestion de notas personales"
+#     NOTAS_COMPARTIDAS   = "publicacion de notas compartidas"
+
+#     # Exámenes — acceso
+#     EXAMENES_BASICOS    = "examenes por tema"
+#     EXAMENES_AVANZADOS  = "examenes por tema"
+
+#     # Exámenes — intentos
+#     INTENTOS_LIMITADOS  = "examenes por tema"
+#     INTENTOS_ILIMITADOS = "acceso premium completo"
+
+#     # Exámenes — resultados
+#     SOLO_CALIFICACION   = "examenes por tema"
+#     DESGLOSE            = "acceso premium completo"
+
+#     # Historial
+#     HISTORIAL           = "acceso premium completo"
+#     HISTORIAL_IA        = "historial de consultas ia"
+
+#     # Extras
+#     DESCARGA            = "descarga para uso offline"
+#     MODO_OFFLINE        = "acceso a funcionamiento offline"
+#     IA                  = "asistencia inteligente contextual"
+
 class Beneficios:
     # Contenido
     BIBLIOTECA          = "acceso a biblioteca virtual"
-    BUSQUEDA            = "busqueda y filtros avanzados"
+    BUSQUEDA            = "busqueda de recursos"
 
     # Notas
-    NOTAS               = "gestion de notas personales"
-    NOTAS_COMPARTIDAS   = "publicacion de notas compartidas"
+    NOTAS               = "gestion de notas"
+    NOTAS_COMPARTIDAS   = "notas compartidas"
 
     # Exámenes — acceso
-    EXAMENES_BASICOS    = "examenes por tema"
-    EXAMENES_AVANZADOS  = "examenes por tema"
+    EXAMENES_BASICOS    = "acceso a examenes basicos"
+    EXAMENES_AVANZADOS  = "acceso a examenes avanzados"
 
     # Exámenes — intentos
-    INTENTOS_LIMITADOS  = "examenes por tema"
-    INTENTOS_ILIMITADOS = "acceso premium completo"
+    INTENTOS_LIMITADOS  = "intentos limitados (2 por examen)"
+    INTENTOS_ILIMITADOS = "intentos ilimitados"
 
     # Exámenes — resultados
-    SOLO_CALIFICACION   = "examenes por tema"
-    DESGLOSE            = "acceso premium completo"
+    SOLO_CALIFICACION   = "ver solo calificacion"
+    DESGLOSE            = "ver desglose completo"
 
     # Historial
-    HISTORIAL           = "acceso premium completo"
-    HISTORIAL_IA        = "historial de consultas ia"
+    HISTORIAL           = "historial de intentos"
+    HISTORIAL_IA        = "historial ia"
 
     # Extras
-    DESCARGA            = "descarga para uso offline"
-    MODO_OFFLINE        = "acceso a funcionamiento offline"
-    IA                  = "asistencia inteligente contextual"
+    DESCARGA            = "descarga offline"
+    MODO_OFFLINE        = "modo offline"
+    IA                  = "asistente ia"

@@ -40,7 +40,7 @@ insert into subtema (nombre, descripcion, nivel_dificultad) values ('Ética y So
 
 -- 2. Membresías y beneficios
 insert into beneficio (nombre, descripcion) values
-('Acceso a Biblioteca','Permite acceder a los recursos educativos disponibles.'),
+('Acceso a Biblioteca Virtual','Permite acceder a los recursos educativos disponibles.'),
 ('Busqueda de Recursos','Permite buscar y filtrar recursos por diferentes criterios.'),
 ('Gestion de Notas','Permite crear, editar y eliminar notas personales.'),
 ('Notas Compartidas','Permite publicar notas visibles para otros usuarios.');
@@ -240,6 +240,174 @@ VALUES('Musica Alemana', 'Marcha militar alemana Erika','Musica Alemana de la ma
 
 Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
 VALUES('Musica Extranjera', 'Noche Oscura"(Dark is the Night-Тёмная ночь)','Musica extranjera que es de amor pero suena triste y melancolica por el idioma', 'https://youtu.be/Pb9cOAnw6Y4?si=amUglfP6Q92ML8gp', '', NOW(), 2, 1, 7 );
+
+Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
+VALUES('Aritmética - Pamer',
+'Aritmética',
+'Aritmética',
+'https://drive.google.com/file/d/1X9CMcx7MgqUyBQWCgLxZfSru9k12aGQv/view?usp=drive_link',
+'1X9CMcx7MgqUyBQWCgLxZfSru9k12aGQv',
+NULL,
+1,1,5);
+
+Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
+VALUES('Libro de cálculo diferencial.',
+'Calculo Diferencial 1',
+'Material de cálculo diferencial.',
+'https://drive.google.com/file/d/1wiWD6PQMuNqta0Ss-FwVUeC_6u9H_Rc5/view?usp=drive_link',
+NULL,
+'2026-04-11 05:25:54',
+1,1,2);
+
+-- Historia → Política Contemporánea (6)
+Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
+VALUES('Antología de lecturas sobre historia nacional.',
+'Antologia de Lecturas Historia de mexico',
+'Material de apoyo de Historia de México.',
+'https://drive.google.com/file/d/1Bd-SHuEPD01PQJs-i0kWOmkJXykQNkwV/view?usp=sharing',
+NULL,
+'2026-04-11 05:25:54',
+1,1,6);
+
+-- Biología → Biología Celular (3)
+Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
+VALUES('Libro de biología humana.',
+'Biologia Humana',
+'Material general de biología humana.',
+'https://drive.google.com/file/d/1r7zibwQO3zwakgzEPQMtdJyxA93KUUdd/view?usp=sharing',
+NULL,
+'2026-04-11 05:25:54',
+1,1,3);
+
+-- Álgebra → Álgebra Lineal (5)
+Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
+VALUES('Compendio de álgebra.',
+'Compe Algebra Trilce',
+'Material general de álgebra.',
+'https://drive.google.com/file/d/1j5_Dz8XDCUpjMYjywccoCdDdan9-noi3/view?usp=sharing',
+NULL,
+'2026-04-11 05:25:54',
+1,1,5);
+
+-- Literatura → Ética y Sociedad (7)
+Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
+VALUES('Compendio de literatura.',
+'Compe Literatura Trilce',
+'Material general de literatura.',
+'https://drive.google.com/file/d/1v2mEzAWAGUUlild5YHX_j1onSj30UVTi/view?usp=sharing',
+NULL,
+'2026-04-11 05:25:54',
+1,1,7);
+
+-- Genética → Biología Celular (3)
+Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
+VALUES('Libro introductorio de genética.',
+'Conceptos basicos de genetica',
+'Conceptos básicos de genética.',
+'https://drive.google.com/file/d/1iZV21wcJe-g4unoD69VLhCn7ibzuK54J/view?usp=sharing',
+NULL,
+'2026-04-11 05:25:54',
+1,1,3);
+
+-- Revolución → Política (6)
+Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
+VALUES('Material histórico de la Revolución Mexicana.',
+'Cuadernos De Historia La Revolucion Mexicana 1985',
+'Obra sobre el proceso revolucionario mexicano.',
+'https://drive.google.com/file/d/1gxcmorF1goExVSgh7_eU6pNOBhWW-zPu/view?usp=sharing',
+NULL,
+'2026-04-11 05:25:54',
+1,1,6);
+
+-- Historia → Política (6)
+Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
+VALUES('Libro de Historia de México.',
+'Historia de Mexico I',
+'Primer curso general de Historia de México.',
+'https://drive.google.com/file/d/1RaPKmmwQakkmKoyCzwvAVWGSXx3zx2c0/view?usp=sharing',
+NULL,
+'2026-04-11 05:25:54',
+1,1,6);
+
+-- Química (no tienes subtema) → lo más cercano Ética/otros (7)
+Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
+VALUES('Material de química.',
+'ESTEQUIOMETRIA Y EQUILIBRIO',
+'Material de estequiometría y equilibrio químico.',
+'https://drive.google.com/file/d/1YpvxSiWcI62bn4pl_53kjsbtc5wuzuev/view?usp=sharing',
+NULL,
+'2026-04-11 05:25:54',
+1,1,7);
+
+-- Genética → Biología Celular (3)
+Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
+VALUES('Libro de genética general.',
+'Genetica General',
+'Material de genética general.',
+'https://drive.google.com/file/d/1wFrn1iHo44yVDOsp1mqRRUnQPmni7_hS/view?usp=sharing',
+NULL,
+'2026-04-11 05:25:54',
+1,1,3);
+
+-- Razones → Álgebra (5)
+Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
+VALUES('Guía de razones y proporciones.',
+'Guía-N°-2-Matemática-Razones-y-proporciones',
+'Material de matemáticas sobre razones y proporciones.',
+'https://drive.google.com/file/d/1UkAYeVsXAlbF411IsZXlf2boIkqX-55E/view?usp=sharing',
+NULL,
+'2026-04-11 05:25:54',
+1,1,5);
+
+-- Historia matemática → Álgebra (5)
+Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
+VALUES('Libro de historia y filosofía matemática.',
+'Historia-y-filosofia-de-las-matematicas',
+'Obra sobre la historia y la filosofía de las matemáticas.',
+'https://drive.google.com/file/d/1VmWd2dYXWFRhxZVhIIJ25-njbmw7kDFq/view?usp=sharing',
+NULL,
+'2026-04-11 05:25:54',
+1,1,5);
+
+-- Literatura → Ética (7)
+Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
+VALUES('Libro escolar de literatura.',
+'Literatura - Pamer',
+'Material general de literatura.',
+'https://drive.google.com/file/d/1yuKFGbhh6FCofNRK9oLe2VxQp3NN4JWQ/view?usp=sharing',
+NULL,
+'2026-04-11 05:25:54',
+1,1,7);
+
+-- Matemática básica → Álgebra (5)
+Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
+VALUES('Libro de matemáticas básicas.',
+'MATEMÁTICA BÁSICA PARA LA EDUCACIÓN SUPERIOR',
+'Material general de matemáticas básicas.',
+'https://drive.google.com/file/d/1MqaVE6Lt2gkXRH59xh3d2KA7hE94OyQf/view?usp=sharing',
+NULL,
+'2026-04-11 05:25:54',
+1,1,5);
+
+-- Historia → Política (6)
+Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
+VALUES('Libro de Historia de México.',
+'Historia de Mexico II',
+'Segundo curso general de Historia de México.',
+'https://drive.google.com/file/d/1cFneEGa2aiJ0F7ZRkmPW-wvXWAw_4kh5/view?usp=sharing',
+NULL,
+'2026-04-11 05:25:54',
+1,1,6);
+
+-- Historia matemáticas → Álgebra (5)
+Insert INTO recurso(contenido, titulo, descripcion, url_archivo, external_id, fecha_publicacion, id_tipo, id_estado, id_subtema)
+VALUES('Libro histórico sobre matemáticas.',
+'historia-de-las-matematicas en los ultimos 10000 años',
+'Obra sobre la evolución histórica de las matemáticas.',
+'https://drive.google.com/file/d/1b6kHolkRFKdUt9ir708SRZGR6-YxlNlB/view?usp=sharing',
+NULL,
+'2026-04-11 05:25:54',
+1,1,5);
 
 insert into recurso_etiqueta (id_recurso, id_etiqueta) values (1,1);
 insert into recurso_etiqueta (id_recurso, id_etiqueta) values (2,1);
