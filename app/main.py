@@ -4,7 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 # from sqladmin import Admin
 # from app.admin.views import UserAdmin
 from app.db.session import init_db
-from app.api.v1.api import tema, usuarios, auth, recursos, examen, subtema, estado, rol, tipo, etiqueta, publicaciones, nota, pregunta, opcion, intento, membresia, beneficio, vistas, progreso, home, usuario_membresia, paypal, search, offline
+from app.api.v1.api import tema, usuarios, auth, recursos, examen, subtema, estado, rol, tipo, etiqueta, publicaciones, nota, pregunta, opcion, intento, membresia, beneficio, vistas, progreso, home, usuario_membresia, paypal, search, offline, proxy, ia
+
 import logging
 from app.db.seed import run_seed
 
@@ -55,12 +56,14 @@ app.include_router(home.router, prefix="/api")
 app.include_router(paypal.router, prefix="/api")
 app.include_router(search.router, prefix="/api")
 app.include_router(offline.router, prefix="/api")
-
+app.include_router(proxy.router, prefix="/api")
+app.include_router(ia.router, prefix="/api")
 @app.on_event("startup")
 def on_startup():
     if os.getenv("ENV") != "test":
         init_db()
         run_seed()
+
 
 @app.get("/")
 def root():

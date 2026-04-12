@@ -2,10 +2,14 @@ from typing import List, Optional
 from fastapi import Depends, HTTPException, status
 from app.api.deps import get_current_active_user
 from app.models.usuario import Usuario
+import unicodedata
 
 
 def normalize(text: str) -> str:
-    return text.strip().lower()
+    text = text.strip().lower()
+    text = unicodedata.normalize("NFKD", text)
+    text = "".join(c for c in text if not unicodedata.combining(c))
+    return text
 
 
 def has_benefit(user: Usuario, benefit: str) -> bool:
@@ -25,12 +29,14 @@ def has_benefit(user: Usuario, benefit: str) -> bool:
                     return True
     return False
 
+
 def is_admin(user: Usuario) -> bool:
     return bool(
-        user.rol and 
-        user.rol.nombre and 
+        user.rol and
+        user.rol.nombre and
         user.rol.nombre.lower() == "admin"
     )
+
 
 class PermissionChecker:
     """
@@ -107,9 +113,39 @@ class PermissionChecker:
         )
 
 
+# class Beneficios:
+#     # Contenido
+#     BIBLIOTECA          = "acceso a biblioteca virtual"
+#     BUSQUEDA            = "busqueda y filtros avanzados"
+
+#     # Notas
+#     NOTAS               = "gestion de notas personales"
+#     NOTAS_COMPARTIDAS   = "publicacion de notas compartidas"
+
+#     # Exámenes — acceso
+#     EXAMENES_BASICOS    = "examenes por tema"
+#     EXAMENES_AVANZADOS  = "examenes por tema"
+
+#     # Exámenes — intentos
+#     INTENTOS_LIMITADOS  = "examenes por tema"
+#     INTENTOS_ILIMITADOS = "acceso premium completo"
+
+#     # Exámenes — resultados
+#     SOLO_CALIFICACION   = "examenes por tema"
+#     DESGLOSE            = "acceso premium completo"
+
+#     # Historial
+#     HISTORIAL           = "acceso premium completo"
+#     HISTORIAL_IA        = "historial de consultas ia"
+
+#     # Extras
+#     DESCARGA            = "descarga para uso offline"
+#     MODO_OFFLINE        = "acceso a funcionamiento offline"
+#     IA                  = "asistencia inteligente contextual"
+
 class Beneficios:
     # Contenido
-    BIBLIOTECA          = "acceso a biblioteca"
+    BIBLIOTECA          = "acceso a biblioteca virtual"
     BUSQUEDA            = "busqueda de recursos"
 
     # Notas

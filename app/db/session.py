@@ -39,7 +39,7 @@ def init_db() -> None:
     from app.models.tipo import Tipo
     from app.models.estado import Estado
     from app.models.tema import Tema
-    
+    from app.models.ia_consulta import IAConsulta
     # Tablas con dependencias nivel 1
     from app.models.subtema import Subtema
     from app.models.usuario import Usuario

@@ -5,6 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from app.api import deps
+from datetime import timedelta, datetime
 from app.core.security import ALGORITHM, create_access_token
 from app.schemas.token import Token
 from app.crud import crud_usuario
@@ -36,11 +37,23 @@ def login_access_token(
         )
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    def get_membresia_activa_nombre(user):
+        activas = [m for m in user.membresias if m.activa and m.membresia]
+        if not activas:
+            return None
+        activas.sort(key=lambda x: x.fecha_inicio or datetime.min, reverse=True)
+        return activas[0].membresia.nombre
+
+    # dentro de login_access_token
+    nombre_membresia = get_membresia_activa_nombre(user)
+
     access_token = create_access_token(
-        subject=str(user.id_usuario), expires_delta=access_token_expires,
+        subject=str(user.id_usuario),
+        expires_delta=access_token_expires,
         extra_data={
             "email": user.correo,
-            "rol": user.rol.nombre if user.rol else None 
+            "rol": user.rol.nombre if user.rol else None,
+            "membresia": nombre_membresia,
         }
     )
     return Token(access_token=access_token, token_type="bearer")

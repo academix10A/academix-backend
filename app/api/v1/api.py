@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import auth, tema, recursos, usuarios, examen, subtema, estado, rol, tipo, etiqueta, publicaciones, nota, pregunta, opcion, intento, membresia, beneficio, vistas, progreso, home, usuario_membresia, paypal, search, offline
+from app.api.v1.endpoints import auth, tema, recursos, usuarios, examen, subtema, estado, rol, tipo, etiqueta, publicaciones, nota, pregunta, opcion, intento, membresia, beneficio, vistas, progreso, home, usuario_membresia, paypal, search, offline,proxy,ia
+
 
 api_router = APIRouter()
 
@@ -28,3 +29,6 @@ api_router.include_router(home.router, prefix="/home", tags=["Home"])
 api_router.include_router(paypal.router, prefix="/paypal", tags=["Paypal"])
 api_router.include_router(search.router, prefix="/search", tags=["Search"])
 api_router.include_router(offline.router, prefix="/offline", tags=["Offline"])
+api_router.include_router(home.router, prefix="/progreso", tags=["Home"])
+api_router.include_router(proxy.router, tags=["Proxy"])
+api_router.include_router(ia.router)

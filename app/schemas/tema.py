@@ -189,9 +189,17 @@ class TemaUpdate(BaseModel):
     #     return normalizacion.get(v, v)
 
 
+class SubtemaSimple(BaseModel):
+    id_subtema: int
+    nombre: str
+    
+    class Config:
+        from_attributes = True
+
 class Tema(TemaBase):
     """Schema de respuesta"""
     id_tema: int
+    subtemas: list[SubtemaSimple] = []
     
     class Config:
         from_attributes = True
