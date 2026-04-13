@@ -20,28 +20,30 @@ usuarios_activos  = PermissionChecker(membresias=["premium", "gratis"])
 
 # ── GET / — listado con búsqueda y paginación ─────────────────────────────────
 
+@router.get("/usuario")
+def obtener_publicaciones_usuario(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_active_user)
+):
+    """Obtiene todas las notas del usuario actual (privadas + compartidas)."""
+    publicaciones = crud_publicacion.get_publicacion_by_usuario(db, id_usuario=current_user.id_usuario, skip=skip, limit=limit)
+    return publicaciones
+
 @router.get("/", response_model=PublicacionesResponse)
 def list_publicaciones(
     skip:           int            = Query(0,  ge=0),
     limit:          int            = Query(20, ge=1, le=100),
-    titulo:         Optional[str]  = Query(None, description="Buscar por título"),
-    nombre_usuario: Optional[str]  = Query(None, description="Buscar por nombre del autor"),
-    etiqueta:       Optional[str]  = Query(None, description="Filtrar por etiqueta"),
     db: Session = Depends(get_db),
 ):
     """
     Lista publicaciones con filtros opcionales y paginación.
-    - `titulo`         → búsqueda parcial en el título
-    - `nombre_usuario` → búsqueda parcial en nombre/apellido del autor
-    - `etiqueta`       → filtra por nombre de etiqueta
     """
     items, total = crud_publicacion.get_publicaciones(
         db,
         skip=skip,
         limit=limit,
-        titulo=titulo,
-        nombre_usuario=nombre_usuario,
-        etiqueta=etiqueta,
     )
     return PublicacionesResponse(items=items, total=total, skip=skip, limit=limit)
 
