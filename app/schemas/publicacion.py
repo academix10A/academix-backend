@@ -39,15 +39,25 @@ def _sanitizar_texto(v: str) -> str:
 def _sanitizar_descripcion(v: str) -> str:
     v = v.strip()
     v = re.sub(r'\s+', ' ', v)
-    if len(v) < 5:
+    # La descripción puede ser vacía (Flutter la manda opcional)
+    if v and len(v) < 5:
         raise ValueError('La descripción debe tener al menos 5 caracteres')
     for patron in _PATRONES_PELIGROSOS:
         if re.search(patron, v, re.IGNORECASE):
             raise ValueError('Contenido no permitido en la descripción')
     return escape(v)
 
+def _sanitizar_etiqueta(nombre: str) -> str:
+    """Limpia y valida un nombre de etiqueta individual."""
+    nombre = nombre.strip()
+    if not nombre:
+        raise ValueError('El nombre de la etiqueta no puede estar vacío')
+    if len(nombre) > 150:
+        raise ValueError('La etiqueta no puede superar los 150 caracteres')
+    return nombre
 
-# ── Schema de usuario embebido en publicación ─────────────────────────────────
+
+# ── Schemas embebidos en respuesta ────────────────────────────────────────────
 
 class UsuarioPublicacion(BaseModel):
     """Info mínima del autor que se devuelve junto a la publicación."""
@@ -63,9 +73,8 @@ class UsuarioPublicacion(BaseModel):
         return f"{self.nombre} {self.apellido_paterno}"
 
 
-# ── Schema de etiqueta embebida ───────────────────────────────────────────────
-
 class EtiquetaOut(BaseModel):
+    """Etiqueta embebida en la respuesta (con ID y nombre)."""
     id_etiqueta: int
     nombre: str
 
@@ -73,34 +82,17 @@ class EtiquetaOut(BaseModel):
         from_attributes = True
 
 
-# ── Schemas de Publicación ────────────────────────────────────────────────────
-
-class PublicacionBase(BaseModel):
-    titulo: Optional[str] = Field(None, min_length=5, max_length=250)
-    descripcion: Optional[str] = Field(None, min_length=5, max_length=500)
-    texto: Optional[str] = Field(None, min_length=5, max_length=10000)
-    id_usuario: Optional[int] = Field(None, gt=0)
-    id_estado: Optional[int] = Field(None, gt=0)
-
-    @field_validator('titulo')
-    @classmethod
-    def sanitizar_titulo(cls, v): return _sanitizar_titulo(v) if v else v
-
-    @field_validator('descripcion')
-    @classmethod
-    def sanitizar_descripcion(cls, v): return _sanitizar_descripcion(v) if v else v
-
-    @field_validator('texto')
-    @classmethod
-    def sanitizar_texto(cls, v): return _sanitizar_texto(v) if v else v
-
+# ── Create ────────────────────────────────────────────────────────────────────
 
 class PublicacionCreate(BaseModel):
     titulo: str = Field(..., min_length=5, max_length=250)
-    descripcion: str = Field(..., min_length=5, max_length=500)
+    # Descripción opcional desde Flutter; el backend acepta string vacío
+    descripcion: str = Field(default="", max_length=500)
     texto: str = Field(..., min_length=5, max_length=10000)
-    id_estado: int = Field(..., gt=0)
-    etiquetas: Optional[List[int]] = Field(default=[], description="IDs de etiquetas a asociar")
+    # id_estado opcional: el backend asigna 4 por defecto si no se envía
+    id_estado: Optional[int] = Field(default=None, gt=0)
+    # Etiquetas como nombres (strings) — el backend las crea si no existen
+    etiquetas: Optional[List[str]] = Field(default=[], description="Nombres de etiquetas a asociar")
 
     @field_validator('titulo')
     @classmethod
@@ -114,13 +106,23 @@ class PublicacionCreate(BaseModel):
     @classmethod
     def sanitizar_texto(cls, v): return _sanitizar_texto(v)
 
+    @field_validator('etiquetas', mode='before')
+    @classmethod
+    def sanitizar_etiquetas(cls, v):
+        if not v:
+            return []
+        return [_sanitizar_etiqueta(nombre) for nombre in v if nombre.strip()]
+
+
+# ── Update ────────────────────────────────────────────────────────────────────
 
 class PublicacionUpdate(BaseModel):
     titulo: Optional[str] = Field(None, min_length=5, max_length=250)
-    descripcion: Optional[str] = Field(None, min_length=5, max_length=500)
+    descripcion: Optional[str] = Field(None, max_length=500)
     texto: Optional[str] = Field(None, min_length=5, max_length=10000)
     id_estado: Optional[int] = Field(None, gt=0)
-    etiquetas: Optional[List[int]] = Field(None, description="IDs de etiquetas (reemplaza las actuales)")
+    # Etiquetas como nombres (strings) — reemplaza las actuales
+    etiquetas: Optional[List[str]] = Field(None, description="Nombres de etiquetas (reemplaza las actuales)")
 
     @field_validator('titulo')
     @classmethod
@@ -134,8 +136,15 @@ class PublicacionUpdate(BaseModel):
     @classmethod
     def sanitizar_texto(cls, v): return _sanitizar_texto(v) if v else v
 
+    @field_validator('etiquetas', mode='before')
+    @classmethod
+    def sanitizar_etiquetas(cls, v):
+        if v is None:
+            return None
+        return [_sanitizar_etiqueta(nombre) for nombre in v if nombre.strip()]
 
-# ── Schema de respuesta enriquecida ──────────────────────────────────────────
+
+# ── Read (respuesta completa) ─────────────────────────────────────────────────
 
 class Publicacion(BaseModel):
     """Schema de respuesta completo con autor y etiquetas embebidas."""
@@ -146,15 +155,14 @@ class Publicacion(BaseModel):
     fecha_creacion: datetime
     id_estado: Optional[int] = None
 
-    # Datos del autor
     usuario: Optional[UsuarioPublicacion] = None
-
-    # Etiquetas asociadas
     etiquetas: List[EtiquetaOut] = []
 
     class Config:
         from_attributes = True
 
+
+# ── Resumen (listados) ────────────────────────────────────────────────────────
 
 class PublicacionResumen(BaseModel):
     """Schema ligero para listas (sin el texto completo)."""
@@ -169,6 +177,8 @@ class PublicacionResumen(BaseModel):
     class Config:
         from_attributes = True
 
+
+# ── Respuesta paginada ────────────────────────────────────────────────────────
 
 class PublicacionesResponse(BaseModel):
     """Respuesta paginada de publicaciones."""
