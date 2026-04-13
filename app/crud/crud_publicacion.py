@@ -9,10 +9,17 @@ from app.models.etiqueta import Etiqueta
 from app.models.usuario import Usuario
 from app.schemas.publicacion import PublicacionCreate, PublicacionUpdate
 
+DEFAULT_ID_ESTADO = 4
+
 
 # ── Helpers internos ──────────────────────────────────────────────────────────
 
-def _apply_filters(query, titulo: Optional[str], nombre_usuario: Optional[str], etiqueta: Optional[str]):
+def _apply_filters(
+    query,
+    titulo: Optional[str] = None,
+    nombre_usuario: Optional[str] = None,
+    etiqueta: Optional[str] = None,
+):
     """Aplica los filtros de búsqueda a un query base."""
     if titulo:
         query = query.filter(Publicacion.titulo.ilike(f"%{titulo}%"))
@@ -31,6 +38,25 @@ def _apply_filters(query, titulo: Optional[str], nombre_usuario: Optional[str], 
         )
 
     return query
+
+
+def _resolver_etiquetas_por_nombre(db: Session, nombres: List[str]) -> List[Etiqueta]:
+    """
+    Dado una lista de nombres de etiquetas, devuelve los objetos Etiqueta
+    correspondientes. Si una etiqueta no existe, la crea automáticamente.
+    """
+    etiquetas = []
+    for nombre in nombres:
+        nombre = nombre.strip()
+        if not nombre:
+            continue
+        etiqueta = db.query(Etiqueta).filter(Etiqueta.nombre == nombre).first()
+        if not etiqueta:
+            etiqueta = Etiqueta(nombre=nombre)
+            db.add(etiqueta)
+            db.flush()  # Obtener el ID sin hacer commit todavía
+        etiquetas.append(etiqueta)
+    return etiquetas
 
 
 # ── Lecturas ──────────────────────────────────────────────────────────────────
@@ -71,11 +97,11 @@ def get_publicaciones(
     base_query = _apply_filters(base_query, titulo, nombre_usuario, etiqueta)
 
     # Contar antes de paginar
-    total = (
+    total_query = (
         db.query(func.count(Publicacion.id_publicacion.distinct()))
         .select_from(Publicacion)
     )
-    total = _apply_filters(total, titulo, nombre_usuario, etiqueta).scalar()
+    total = _apply_filters(total_query, titulo, nombre_usuario, etiqueta).scalar()
 
     items = (
         base_query
@@ -88,6 +114,24 @@ def get_publicaciones(
     return items, total
 
 
+def get_publicacion_by_usuario(
+    db: Session,
+    id_usuario: int,
+    skip: int = 0,
+    limit: int = 100,
+) -> List[Publicacion]:
+    """Obtiene solo las publicaciones que pertenecen a un usuario específico."""
+    return (
+        db.query(Publicacion)
+        .options(joinedload(Publicacion.usuario), joinedload(Publicacion.etiquetas))
+        .filter(Publicacion.id_usuario == id_usuario)
+        .order_by(Publicacion.fecha_creacion.desc())
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
+
 # ── Escritura ─────────────────────────────────────────────────────────────────
 
 def create_publicacion(
@@ -95,21 +139,22 @@ def create_publicacion(
     publicacion_in: PublicacionCreate,
     id_usuario: int,
 ) -> Publicacion:
-    """Crea una publicación. El id_usuario siempre viene del token JWT."""
+    """
+    Crea una publicación. El id_usuario siempre viene del token JWT.
+    - etiquetas: acepta lista de strings (nombres). Las crea si no existen.
+    - id_estado: usa el valor del schema o DEFAULT_ID_ESTADO si no se envía.
+    """
     db_obj = Publicacion(
         titulo      = publicacion_in.titulo,
         descripcion = publicacion_in.descripcion,
         texto       = publicacion_in.texto,
         id_usuario  = id_usuario,
-        id_estado   = publicacion_in.id_estado,
+        id_estado   = publicacion_in.id_estado if publicacion_in.id_estado is not None else DEFAULT_ID_ESTADO,
     )
 
-    # Asociar etiquetas si se enviaron IDs
+    # Resolver etiquetas por nombre (strings) — las crea si no existen
     if publicacion_in.etiquetas:
-        etiquetas = db.query(Etiqueta).filter(
-            Etiqueta.id_etiqueta.in_(publicacion_in.etiquetas)
-        ).all()
-        db_obj.etiquetas = etiquetas
+        db_obj.etiquetas = _resolver_etiquetas_por_nombre(db, publicacion_in.etiquetas)
 
     db.add(db_obj)
     db.commit()
@@ -128,17 +173,14 @@ def update_publicacion(
 
     update_data = publicacion_in.model_dump(exclude_unset=True)
 
-    # Manejar etiquetas por separado
-    etiqueta_ids = update_data.pop("etiquetas", None)
+    # Manejar etiquetas por separado (vienen como strings)
+    etiqueta_nombres = update_data.pop("etiquetas", None)
 
     for field, value in update_data.items():
         setattr(db_obj, field, value)
 
-    if etiqueta_ids is not None:
-        etiquetas = db.query(Etiqueta).filter(
-            Etiqueta.id_etiqueta.in_(etiqueta_ids)
-        ).all()
-        db_obj.etiquetas = etiquetas
+    if etiqueta_nombres is not None:
+        db_obj.etiquetas = _resolver_etiquetas_por_nombre(db, etiqueta_nombres)
 
     db.commit()
     db.refresh(db_obj)
