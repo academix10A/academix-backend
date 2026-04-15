@@ -46,6 +46,7 @@ def get_notas_compartidas(
     """Obtiene todas las notas marcadas como compartidas."""
     return (
         db.query(Nota)
+        .options(joinedload(Nota.usuario))
         .filter(Nota.es_compartida == True)
         .order_by(Nota.fecha_creacion.desc())
         .offset(skip)

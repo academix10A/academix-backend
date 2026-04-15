@@ -70,6 +70,47 @@ def get_publicacion(db: Session, publicacion_id: int) -> Optional[Publicacion]:
         .first()
     )
 
+def get_publicaciones_filtros(
+    db: Session,
+    skip: int = 0,
+    limit: int = 20,
+    titulo: Optional[str] = None,
+    nombre_usuario: Optional[str] = None,
+    etiqueta: Optional[str] = None,
+    solo_publicadas: bool = False,
+) -> Tuple[List[Publicacion], int]:
+
+    base_query = (
+        db.query(Publicacion)
+        .options(joinedload(Publicacion.usuario), joinedload(Publicacion.etiquetas))
+    )
+
+    if solo_publicadas:
+        base_query = base_query.filter(Publicacion.id_estado == 3)
+
+    base_query = _apply_filters(base_query, titulo, nombre_usuario, etiqueta)
+
+    total_query = (
+        db.query(func.count(Publicacion.id_publicacion.distinct()))
+        .select_from(Publicacion)
+    )
+
+    if solo_publicadas:
+        total_query = total_query.filter(Publicacion.id_estado == 3)
+
+    total_query = _apply_filters(total_query, titulo, nombre_usuario, etiqueta)
+
+    total = total_query.scalar()
+
+    items = (
+        base_query
+        .order_by(Publicacion.fecha_creacion.desc())
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
+    return items, total
 
 def get_publicacion_by_titulo(db: Session, titulo: str) -> Optional[Publicacion]:
     return db.query(Publicacion).filter(Publicacion.titulo == titulo).first()

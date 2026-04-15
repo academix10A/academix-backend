@@ -19,6 +19,7 @@ from app.schemas.usuario import (
     UsuarioMembresiaCreate
 )
 from app.core.permissions import PermissionChecker
+from app.api.deps import get_current_active_user
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
@@ -93,6 +94,23 @@ def listar_usuarios(
     )
     
     return usuarios
+
+@router.get("/refresh")
+def get_me(current_user: Usuario = Depends(get_current_active_user)):
+    
+    def get_membresia_activa_nombre(user):
+        activas = [m for m in user.membresias if m.activa and m.membresia]
+        if not activas:
+            return None
+        activas.sort(key=lambda x: x.fecha_inicio or datetime.min, reverse=True)
+        return activas[0].membresia.nombre
+
+    return {
+        "id_usuario": current_user.id_usuario,
+        "email": current_user.correo,
+        "rol": current_user.rol.nombre if current_user.rol else None,
+        "membresia": get_membresia_activa_nombre(current_user)
+    }
 
 @router.get("/membresia/{id_usuario}", response_model=MembresiaUsuarioResponse)
 def get_membresia_usuario(id_usuario: int, db: Session = Depends(get_db)):

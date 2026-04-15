@@ -13,13 +13,9 @@ from functools import wraps
 from fastapi import HTTPException, Depends
 from app.models.usuario import Usuario
 from app.api.deps import get_current_active_user
-
+from app.core.config import settings
 
 router = APIRouter()
-
-
-ACCESS_TOKEN_EXPIRE_MINUTES = 90
-
 
 @router.post("/login/access-token", response_model=Token)
 def login_access_token(
@@ -36,7 +32,7 @@ def login_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     def get_membresia_activa_nombre(user):
         activas = [m for m in user.membresias if m.activa and m.membresia]
         if not activas:
@@ -54,6 +50,7 @@ def login_access_token(
             "email": user.correo,
             "rol": user.rol.nombre if user.rol else None,
             "membresia": nombre_membresia,
+            "nombre": user.nombre,
         }
     )
     return Token(access_token=access_token, token_type="bearer")
