@@ -33,6 +33,14 @@ def _sanitizar(v: str) -> str:
 
 # ── Schemas ───────────────────────────────────────────────────────────────────
 
+class UsuarioNota(BaseModel):
+    id_usuario: int
+    nombre: str
+    apellido_paterno: str
+
+    class Config:
+        from_attributes = True
+
 class NotaBase(BaseModel):
     titulo: Optional[str] = Field(None, min_length=1, max_length=25)
     contenido:    Optional[str]  = Field(None, min_length=1, max_length=5000)
@@ -59,8 +67,9 @@ class NotaCompartidaResponse(BaseModel):
     id_nota: int
     titulo: str
     contenido: str
-    id_usuario: int
     fecha_creacion: datetime
+
+    usuario: Optional[UsuarioNota] = None
 
     class Config:
         from_attributes = True
@@ -121,10 +130,11 @@ class NotaUpdate(BaseModel):
 
 
 class Nota(NotaBase):
-    """Schema de respuesta completo."""
-    id_nota:             int
-    fecha_creacion:      datetime
+    id_nota: int
+    fecha_creacion: datetime
     fecha_actualizacion: datetime
+
+    usuario: Optional[UsuarioNota] = None
 
     class Config:
         from_attributes = True

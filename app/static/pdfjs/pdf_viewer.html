@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"
+  />
+  <title>PDF IA Viewer</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      background: #1e1e1e;
+      font-family: Arial, sans-serif;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-user-select: text;
+      user-select: text;
+      touch-action: auto;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    #viewer {
+      width: 100%;
+      margin: 0;
+      padding: 0 0 24px 0;
+      overflow: visible;
+    }
+
+    .page-shell {
+      position: relative;
+      background: #2b2b2b;
+      margin: 0 0 12px 0;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .page {
+      --user-unit: 1;
+      --total-scale-factor: calc(var(--scale-factor) * var(--user-unit));
+      --scale-round-x: 1px;
+      --scale-round-y: 1px;
+
+      position: relative;
+      background: white;
+      overflow: visible;
+      margin: 0;
+      left: 0;
+      direction: ltr;
+    }
+
+    .page-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #bbb;
+      font-size: 14px;
+      width: 100%;
+      height: 100%;
+      min-height: 240px;
+    }
+
+    canvas {
+      display: block;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      position: relative;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .textLayer {
+      color-scheme: only light;
+      position: absolute;
+      text-align: initial;
+      inset: 0;
+      overflow: hidden;
+      opacity: 1;
+      line-height: 1;
+      -webkit-text-size-adjust: none;
+      text-size-adjust: none;
+      forced-color-adjust: none;
+      transform-origin: 0 0;
+      caret-color: CanvasText;
+      z-index: 2;
+      -webkit-user-select: text;
+      user-select: text;
+      pointer-events: auto;
+      -webkit-touch-callout: default;
+      touch-action: auto;
+      --min-font-size: 1;
+      --text-scale-factor: calc(var(--total-scale-factor) * var(--min-font-size));
+      --min-font-size-inv: calc(1 / var(--min-font-size));
+    }
+
+    .textLayer.highlighting {
+      touch-action: none;
+    }
+
+    .textLayer :is(span, br) {
+      color: transparent;
+      position: absolute;
+      white-space: pre;
+      cursor: text;
+      transform-origin: 0% 0%;
+    }
+
+    .textLayer > :not(.markedContent),
+    .textLayer .markedContent span:not(.markedContent) {
+      z-index: 1;
+      --font-height: 0;
+      font-size: calc(var(--text-scale-factor) * var(--font-height));
+      --scale-x: 1;
+      --rotate: 0deg;
+      transform: rotate(var(--rotate)) scaleX(var(--scale-x)) scale(var(--min-font-size-inv));
+    }
+
+    .textLayer .markedContent {
+      display: contents;
+    }
+
+    .textLayer span[role="img"] {
+      -webkit-user-select: none;
+      user-select: none;
+      cursor: default;
+    }
+
+    .textLayer ::selection {
+      background: rgba(66, 133, 244, 0.35);
+    }
+
+    .textLayer br::selection {
+      background: transparent;
+    }
+  </style>
+
+  <script src="/static/pdfjs/pdf.min.js"></script>
+</head>
+<body>
+  <div id="viewer"></div>
+
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '/static/pdfjs/pdf.worker.min.js';
+
+    const viewer = document.getElementById('viewer');
+
+    let pdfDoc = null;
+    let currentSelectionText = '';
+    let pageMeta = [];
+    let renderQueue = new Set();
+    let observer = null;
+    let resizing = false;
+    let selectionNotifyTimer = null;
+
+    function getPdfUrlFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('pdfUrl');
+    }
+
+    function getAvailableWidth() {
+      const vv = window.visualViewport?.width || 0;
+      const iw = window.innerWidth || 0;
+      const dw = document.documentElement.clientWidth || 0;
+      const bw = document.body.clientWidth || 0;
+      return Math.max(280, Math.min(vv || 99999, iw || 99999, dw || 99999, bw || 99999));
+    }
+
+    function notifyFlutter(payload) {
+      try {
+        if (!window.SelectionChannel || typeof window.SelectionChannel.postMessage !== 'function') {
+          return;
+        }
+        window.SelectionChannel.postMessage(JSON.stringify(payload));
+      } catch (e) {
+        console.error('SelectionChannel ERROR:', e);
+      }
+    }
+
+    function isValidSelection(text) {
+      if (!text) return false;
+      if (text.length < 2) return false;
+      if (/^\d+$/.test(text)) return false;
+      return true;
+    }
+
+    function clearCurrentSelection(notify = true) {
+    try {
+        const sel = window.getSelection && window.getSelection();
+        if (sel && sel.removeAllRanges) {
+        sel.removeAllRanges();
+        }
+    } catch (_) {}
+
+    currentSelectionText = '';
+
+    if (notify) {
+        notifyFlutter({
+        type: 'selection_cleared'
+        });
+    }
+    }
+
+    function clearSelectionFromApp() {
+        clearCurrentSelection(true);
+    }
+
+    function updateSelection() {
+      const selected = (window.getSelection()?.toString() || '').trim();
+
+      if (isValidSelection(selected)) {
+        currentSelectionText = selected;
+        notifyFlutter({
+          type: 'selection_changed',
+          text: currentSelectionText
+        });
+      } else if (currentSelectionText !== '') {
+        currentSelectionText = '';
+        notifyFlutter({
+          type: 'selection_cleared'
+        });
+      }
+    }
+
+    function debouncedUpdateSelection(delay = 120) {
+      clearTimeout(selectionNotifyTimer);
+      selectionNotifyTimer = setTimeout(() => {
+        updateSelection();
+      }, delay);
+    }
+
+    document.addEventListener('selectionchange', () => {
+      debouncedUpdateSelection(80);
+    });
+
+    document.addEventListener('mouseup', () => {
+      debouncedUpdateSelection(40);
+    });
+
+    document.addEventListener('keyup', () => {
+      debouncedUpdateSelection(40);
+    });
+
+    document.addEventListener('touchend', () => {
+      debouncedUpdateSelection(180);
+    });
+
+    document.addEventListener('touchcancel', () => {
+      debouncedUpdateSelection(120);
+    });
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (currentSelectionText) {
+          notifyFlutter({
+            type: 'selection_changed',
+            text: currentSelectionText
+          });
+        }
+      },
+      { passive: true }
+    );
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', () => {
+        if (currentSelectionText) {
+          notifyFlutter({
+            type: 'selection_changed',
+            text: currentSelectionText
+          });
+        }
+      });
+
+      window.visualViewport.addEventListener('scroll', () => {
+        if (currentSelectionText) {
+          notifyFlutter({
+            type: 'selection_changed',
+            text: currentSelectionText
+          });
+        }
+      });
+    }
+
+    async function prepareDocument(url) {
+      viewer.innerHTML = '';
+      clearCurrentSelection(false);
+
+      const loadingTask = pdfjsLib.getDocument({
+        url,
+        withCredentials: false,
+      });
+
+      pdfDoc = await loadingTask.promise;
+
+      const availableWidth = Math.floor(getAvailableWidth());
+      pageMeta = [];
+
+      for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+        const page = await pdfDoc.getPage(pageNum);
+        const baseViewport = page.getViewport({ scale: 1 });
+        const scale = availableWidth / baseViewport.width;
+        const viewport = page.getViewport({ scale });
+
+        pageMeta.push({
+          pageNum,
+          width: Math.floor(viewport.width),
+          height: Math.floor(viewport.height),
+          scale,
+          rendered: false,
+          rendering: false,
+        });
+
+        const shell = document.createElement('div');
+        shell.className = 'page-shell';
+        shell.dataset.pageNum = String(pageNum);
+        shell.style.height = `${Math.floor(viewport.height)}px`;
+
+        const placeholder = document.createElement('div');
+        placeholder.className = 'page-placeholder';
+        placeholder.textContent = `Cargando página ${pageNum}...`;
+
+        shell.appendChild(placeholder);
+        viewer.appendChild(shell);
+      }
+
+      setupObserver();
+    }
+
+    function setupObserver() {
+      if (observer) observer.disconnect();
+
+      observer = new IntersectionObserver(
+        async (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            const pageNum = Number(entry.target.dataset.pageNum);
+            if (!pageNum) continue;
+            renderQueue.add(pageNum);
+          }
+          await flushRenderQueue();
+        },
+        {
+          root: null,
+          rootMargin: '1200px 0px 1200px 0px',
+          threshold: 0.01,
+        }
+      );
+
+      document.querySelectorAll('.page-shell').forEach((el) => observer.observe(el));
+    }
+
+    async function flushRenderQueue() {
+      if (!pdfDoc) return;
+      const pending = Array.from(renderQueue).sort((a, b) => a - b);
+      renderQueue.clear();
+
+      for (const pageNum of pending) {
+        await renderPage(pageNum);
+      }
+    }
+
+    async function renderPage(pageNum) {
+      const meta = pageMeta[pageNum - 1];
+      if (!meta || meta.rendered || meta.rendering) return;
+
+      meta.rendering = true;
+
+      try {
+        const shell = document.querySelector(`.page-shell[data-page-num="${pageNum}"]`);
+        if (!shell) return;
+
+        const page = await pdfDoc.getPage(pageNum);
+        const viewport = page.getViewport({ scale: meta.scale });
+        const dpr = window.devicePixelRatio || 1;
+
+        const pageDiv = document.createElement('div');
+        pageDiv.className = 'page';
+        pageDiv.style.setProperty('--scale-factor', String(meta.scale));
+        pageDiv.style.width = `${meta.width}px`;
+        pageDiv.style.height = `${meta.height}px`;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.floor(meta.width * dpr);
+        canvas.height = Math.floor(meta.height * dpr);
+        canvas.style.width = `${meta.width}px`;
+        canvas.style.height = `${meta.height}px`;
+        pageDiv.appendChild(canvas);
+
+        const context = canvas.getContext('2d', { alpha: false });
+        context.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        await page.render({
+          canvasContext: context,
+          viewport,
+        }).promise;
+
+        const textLayerDiv = document.createElement('div');
+        textLayerDiv.className = 'textLayer';
+        textLayerDiv.style.width = `${meta.width}px`;
+        textLayerDiv.style.height = `${meta.height}px`;
+        pageDiv.appendChild(textLayerDiv);
+
+        const textContent = await page.getTextContent();
+
+        const textRenderTask = pdfjsLib.renderTextLayer({
+          textContentSource: textContent,
+          container: textLayerDiv,
+          viewport,
+          textDivs: [],
+        });
+
+        if (textRenderTask?.promise) {
+          await textRenderTask.promise;
+        }
+
+        shell.innerHTML = '';
+        shell.appendChild(pageDiv);
+        meta.rendered = true;
+      } catch (e) {
+        console.error('RENDER PAGE ERROR', pageNum, e);
+      } finally {
+        meta.rendering = false;
+      }
+    }
+
+    let resizeTimer = null;
+
+    async function loadPdf() {
+      try {
+        const pdfUrl = getPdfUrlFromQuery();
+        if (!pdfUrl) throw new Error('No se recibió pdfUrl');
+
+        await prepareDocument(pdfUrl);
+
+        document.documentElement.scrollLeft = 0;
+        document.body.scrollLeft = 0;
+        viewer.scrollLeft = 0;
+        window.scrollTo(0, 0);
+      } catch (e) {
+        console.error('PDF LOAD ERROR NAME:', e?.name);
+        console.error('PDF LOAD ERROR MESSAGE:', e?.message);
+        console.error('PDF LOAD ERROR FULL:', e);
+      }
+    }
+
+    window.addEventListener('load', loadPdf);
+
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(async () => {
+        if (resizing) return;
+        resizing = true;
+        try {
+          await loadPdf();
+        } finally {
+          resizing = false;
+        }
+      }, 250);
+    });
+  </script>
+</body>
+</html>

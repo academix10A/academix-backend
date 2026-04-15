@@ -3,6 +3,8 @@ from urllib.parse import parse_qs, urlparse
 
 import httpx
 from fastapi import APIRouter, HTTPException
+from pathlib import Path
+from fastapi.responses import HTMLResponse
 from fastapi.responses import HTMLResponse, Response, StreamingResponse
 from starlette.background import BackgroundTask
 
@@ -49,6 +51,10 @@ async def proxy_libro(url: str):
             return Response(content=res.content, media_type="application/pdf")
         return HTMLResponse(content=res.text)
 
+@router.get("/proxy/pdf-viewer", response_class=HTMLResponse)
+async def pdf_viewer():
+    html_path = Path("app/static/pdfjs/pdf_viewer.html")
+    return HTMLResponse(html_path.read_text(encoding="utf-8"))
 
 @router.get("/proxy/pdf")
 async def proxy_pdf(url: str):

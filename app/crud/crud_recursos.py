@@ -2,12 +2,15 @@ from typing import Optional, List
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException, status
-
+# from app.models.intermedias import usuario_recurso
+from app.models.etiqueta import Etiqueta
+from app.models.progreso_contenido import ProgresoContenido
+from app.models.vista_contenido import VistaContenido
 from app.models.recurso import Recurso
 from app.models.tipo import Tipo
 from app.models.estado import Estado
 from app.models.subtema import Subtema
-from app.models.etiqueta import Etiqueta
+# from app.models.etiqueta import Etiqueta
 from app.schemas.recurso import RecursoCreate, RecursoUpdate
 from app.models.tema import Tema
 from app.models.usuario import Usuario
@@ -534,3 +537,46 @@ def get_recursos_por_tipo(
     return db.query(Recurso).filter(
         Recurso.id_tipo == tipo.id_tipo
     ).offset(skip).limit(limit).all()
+
+def delete_recurso(db: Session, recurso_id: int):
+    db_obj = get_recurso(db, recurso_id=recurso_id)
+
+    if not db_obj:
+        return None
+
+    try:
+        # 🔥 TABLAS INTERMEDIAS (Table → execute)
+        db.execute(
+            usuario_recurso.delete().where(
+                usuario_recurso.c.id_recurso == recurso_id
+            )
+        )
+
+        db.execute(
+            recurso_etiqueta.delete().where(
+                recurso_etiqueta.c.id_recurso == recurso_id
+            )
+        )
+
+        # 🔥 MODELOS NORMALES (si existen como class)
+        db.query(ProgresoContenido).filter(
+            ProgresoContenido.id_recurso == recurso_id
+        ).delete()
+
+        db.query(VistaContenido).filter(
+            VistaContenido.id_recurso == recurso_id
+        ).delete()
+
+        # 🔥 BORRAR RECURSO
+        db.delete(db_obj)
+
+        db.commit()
+        return db_obj
+
+    except Exception as e:
+        db.rollback()
+        print("🔥 ERROR REAL:", e)
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )

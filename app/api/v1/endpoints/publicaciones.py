@@ -47,6 +47,29 @@ def list_publicaciones(
     )
     return PublicacionesResponse(items=items, total=total, skip=skip, limit=limit)
 
+@router.get("/filtros/", response_model=PublicacionesResponse)
+def list_publicaciones(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
+
+    titulo: Optional[str] = None,
+    nombre_usuario: Optional[str] = None,
+    etiqueta: Optional[str] = None,
+
+    db: Session = Depends(get_db),
+):
+    items, total = crud_publicacion.get_publicaciones_filtros(
+        db,
+        skip=skip,
+        limit=limit,
+        titulo=titulo,
+        nombre_usuario=nombre_usuario,
+        etiqueta=etiqueta,
+        solo_publicadas=True
+    )
+
+    return PublicacionesResponse(items=items, total=total, skip=skip, limit=limit)
+
 
 # ── GET /titulo/{titulo} ──────────────────────────────────────────────────────
 
@@ -77,9 +100,9 @@ def create_publicacion(
     current_user: Usuario = Depends(get_current_active_user),
 ):
     """Crea una publicación. El autor se toma del token JWT."""
-    publicacion_exists = crud_publicacion.get_publicacion_by_titulo(db, titulo=publicacion_in.titulo)
-    if publicacion_exists:
-        raise HTTPException(status_code=400, detail="Ya existe una publicación con ese título")
+    # publicacion_exists = crud_publicacion.get_publicacion_by_titulo(db, titulo=publicacion_in.titulo)
+    # if publicacion_exists:
+    #     raise HTTPException(status_code=400, detail="Ya existe una publicación con ese título")
 
     return crud_publicacion.create_publicacion(
         db,
