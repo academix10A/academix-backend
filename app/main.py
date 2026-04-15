@@ -1,5 +1,6 @@
 import os
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 # from sqladmin import Admin
 # from app.admin.views import UserAdmin
@@ -14,7 +15,7 @@ app = FastAPI(
     description="API para plataforma de biblioteca virtual y hub de estudio colaborativo",
     version="1.0.0",
 )
-
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 # Configuración de CORS
 app.add_middleware(
     CORSMiddleware,
@@ -24,7 +25,8 @@ app.add_middleware(
         "http://127.0.0.1:5173",
         "http://192.168.152.1:3000",
         "https://academix.homes",
-        "https://www.academix.homes"
+        "https://www.academix.homes",
+        "null",
     ],
     allow_credentials=True,
     allow_methods=["*"],
