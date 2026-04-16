@@ -13,7 +13,7 @@ usuario_recurso = Table(
     Column('id_recurso', Integer, ForeignKey('recurso.id_recurso'), primary_key=True),
     
 )
-
+ 
 # Recurso - Etiqueta
 recurso_etiqueta = Table(
     'recurso_etiqueta',
